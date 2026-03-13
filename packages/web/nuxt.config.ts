@@ -29,6 +29,29 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+      ],
+      script: [
+        {
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'a11yscan',
+            description: 'Pattern-aware CLI accessibility auditor that groups thousands of violations into actionable patterns.',
+            url: 'https://a11yscan.dev',
+            applicationCategory: 'DeveloperApplication',
+            operatingSystem: 'macOS, Linux, Windows (WSL2)',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            license: 'https://opensource.org/licenses/MIT',
+            author: {
+              '@type': 'Organization',
+              name: 'Illinois Criminal Justice Information Authority',
+              url: 'https://icjia.illinois.gov',
+            },
+          }),
+        },
       ],
     },
   },

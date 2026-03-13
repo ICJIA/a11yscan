@@ -1,0 +1,66 @@
+# a11yscan
+
+> Pattern-aware CLI accessibility auditor. Groups thousands of violations into actionable patterns for ARIA roles, accessible names, and color contrast.
+
+## What is a11yscan?
+
+a11yscan is a command-line tool that audits websites for accessibility violations using axe-core and Playwright. Instead of reporting thousands of per-page violations, it groups findings by pattern — the combination of violation type and normalized CSS selector. A single broken component on 340 pages is reported as one pattern with 340 affected URLs, not 340 separate violations.
+
+## Key Features
+
+- Automatic sitemap discovery from a bare URL
+- Concurrent scanning (up to 5 pages in parallel)
+- Pattern analysis: violations grouped by axe-core rule ID + CSS selector
+- Root cause hints for Vuetify, Nuxt, WordPress, Material UI, Shopify, and more
+- Four report formats: CSV, JSON, HTML, Markdown — all grouped by violation type
+- LLM-ready JSON with htmlSnippet, failureSummary, rawSelector, suggestedFix
+- SSRF protection, crash recovery, SIGINT handling
+- CI/CD mode with machine-readable output and exit codes
+
+## Installation
+
+```
+pnpm add -g a11yscan
+npx playwright install chromium
+```
+
+## Quick Start
+
+```
+a11yscan example.com
+a11yscan example.com --filter "/about"
+a11yscan example.com --output csv,json,html,md
+a11yscan example.com --ci --output json
+```
+
+## CLI Flags
+
+- `[url]` — Site URL, auto-appends /sitemap.xml
+- `--sitemap <url>` — Explicit sitemap URL
+- `--filter <path>` — Path prefix to include
+- `--filter-glob <pattern>` — Glob pattern for URL matching
+- `--exclude <paths>` — Comma-separated prefixes to exclude
+- `--depth <n>` — Max URL path depth
+- `--limit <n>` — Max pages to scan
+- `--output <formats>` — csv, json, html, md (default: csv,json,html)
+- `--filename <name>` — Custom report filename
+- `--concurrency <n>` — Parallel pages, 1-5 (default: 4)
+- `--ci` — CI mode: JSON stdout, exit codes
+
+## Report Formats
+
+All reports group violations by pattern type.
+
+- **JSON**: Structured with patternGroups array, LLM-ready fields
+- **CSV**: 11-column spreadsheet sorted by violation type
+- **HTML**: Self-contained styled report with impact badges and expandable URL lists
+- **Markdown**: GitHub-flavored with summary table and collapsible details
+
+## Links
+
+- Homepage: https://a11yscan.dev
+- Documentation: https://a11yscan.dev/docs
+- Features: https://a11yscan.dev/features
+- Roadmap: https://a11yscan.dev/roadmap
+- GitHub: https://github.com/ICJIA/a11yscan
+- Changelog: https://github.com/ICJIA/a11yscan/blob/main/CHANGELOG.md
