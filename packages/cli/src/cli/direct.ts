@@ -54,8 +54,30 @@ function generateTimestamp(): string {
 }
 
 /**
+ * Extract the path section from a URL like "example.com/about" or "https://example.com/research/articles".
+ * Returns the path (e.g., "/about") or null if no meaningful path.
+ */
+function extractSectionPath(input: string): string | null {
+  let url = input;
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+  try {
+    const parsed = new URL(url);
+    const pathname = parsed.pathname.replace(/\/+$/, '');
+    // Ignore root path, sitemap paths, and paths ending in .xml
+    if (!pathname || pathname === '/' || /\.xml$/i.test(pathname)) {
+      return null;
+    }
+    return pathname;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Resolve the sitemap URL from a bare site URL or explicit --sitemap flag.
- * If given "https://example.com", tries "https://example.com/sitemap.xml".
+ * If given "https://example.com/about", discovers sitemap at the site root.
  * Returns the resolved sitemap URL or null if unreachable.
  */
 async function resolveSitemapUrl(input: string): Promise<string | null> {
@@ -69,15 +91,14 @@ async function resolveSitemapUrl(input: string): Promise<string | null> {
     return input;
   }
 
-  // Ensure trailing slash then append sitemap.xml
-  const base = input.replace(/\/+$/, '');
-  const candidate = `${base}/sitemap.xml`;
-
-  // Quick HEAD check to verify it exists
+  // Always discover sitemap at the site root, regardless of path
   try {
-    const res = await fetch(candidate, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+    const parsed = new URL(input);
+    const rootCandidate = `${parsed.protocol}//${parsed.host}/sitemap.xml`;
+
+    const res = await fetch(rootCandidate, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
     if (res.ok) {
-      return candidate;
+      return rootCandidate;
     }
   } catch {
     // fetch failed — sitemap not reachable
@@ -107,25 +128,40 @@ export function createProgram(): Command {
       // Resolve sitemap URL from positional arg or --sitemap flag
       let sitemapUrl: string | undefined = opts.sitemap;
 
+      // Extract section path from URL (e.g., "example.com/about" → "/about")
+      // Use it as implicit --filter unless explicit --filter is provided
+      let sectionPath: string | null = null;
+      if (url && !opts.filter) {
+        sectionPath = extractSectionPath(url);
+        if (sectionPath) {
+          opts.filter = sectionPath;
+        }
+      }
+
       if (!sitemapUrl && url) {
         const isCi = opts.ci;
         // Normalize: auto-prepend https:// if missing
         const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
-        const displayUrl = normalizedUrl.replace(/\/+$/, '');
+        // Always show root domain for sitemap discovery
+        const parsed = new URL(normalizedUrl);
+        const rootUrl = `${parsed.protocol}//${parsed.host}`;
         if (!isCi) {
-          process.stdout.write(chalk.dim(`Checking for sitemap at ${displayUrl}/sitemap.xml... `));
+          process.stdout.write(chalk.dim(`Checking for sitemap at ${rootUrl}/sitemap.xml... `));
         }
         const resolved = await resolveSitemapUrl(normalizedUrl);
         if (resolved) {
           sitemapUrl = resolved;
           if (!isCi) {
             console.log(chalk.green('found'));
+            if (sectionPath) {
+              console.log(chalk.dim(`  Section filter: ${chalk.cyan(sectionPath)}`));
+            }
           }
         } else {
           if (!isCi) {
             console.log(chalk.red('not found'));
             console.error(
-              chalk.red(`\nError: Could not find a sitemap at ${displayUrl}/sitemap.xml`) +
+              chalk.red(`\nError: Could not find a sitemap at ${rootUrl}/sitemap.xml`) +
               chalk.dim('\n  Specify the sitemap URL directly: a11yscan --sitemap <url>')
             );
           }
@@ -140,6 +176,7 @@ export function createProgram(): Command {
       }
 
       opts.sitemap = sitemapUrl;
+      opts.sectionPath = sectionPath;
       await runScan(opts, version);
     });
 
@@ -157,6 +194,7 @@ interface ScanOptions {
   filename?: string;
   concurrency: number;
   ci: boolean;
+  sectionPath?: string | null;
 }
 
 async function runScan(opts: ScanOptions, version: string): Promise<void> {
@@ -252,8 +290,8 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
     console.log(chalk.dim(`\nScanning ${filteredUrls.length} pages with Playwright (concurrency: ${concurrency})...`));
   }
 
-  // Prepare site-specific reports directory (clears previous scan)
-  const siteReportsDir = await prepareSiteReportsDir(opts.sitemap);
+  // Prepare site-specific reports directory with optional section subfolder
+  const siteReportsDir = await prepareSiteReportsDir(opts.sitemap, opts.sectionPath || undefined);
 
   const axeConfig = buildAxeConfig();
   const scanner = new ScannerManager();

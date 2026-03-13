@@ -24,11 +24,22 @@ export function siteDir(sitemapUrl: string): string {
 /**
  * Get a timestamped site-specific reports directory and ensure it exists.
  * Each scan creates a new subfolder: reports/{hostname}/{timestamp}/
+ * If a sectionPath is provided: reports/{hostname}/{section}/{timestamp}/
  * Previous scans are preserved for diffing.
  */
-export async function prepareSiteReportsDir(sitemapUrl: string): Promise<string> {
+export async function prepareSiteReportsDir(sitemapUrl: string, sectionPath?: string): Promise<string> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
-  const dir = resolve(REPORTS_DIR, siteDir(sitemapUrl), timestamp);
+  const hostname = siteDir(sitemapUrl);
+
+  let dir: string;
+  if (sectionPath) {
+    // Convert "/research/articles" → "research/articles" (safe path segments)
+    const safePath = sectionPath.replace(/^\/+/, '').replace(/[^a-zA-Z0-9/_-]/g, '');
+    dir = resolve(REPORTS_DIR, hostname, safePath, timestamp);
+  } else {
+    dir = resolve(REPORTS_DIR, hostname, timestamp);
+  }
+
   await mkdir(dir, { recursive: true });
   return dir;
 }

@@ -202,7 +202,7 @@ useSeoMeta({
 });
 
 const flags = [
-  { name: '[url]', default: '—', description: 'Site URL — auto-appends /sitemap.xml' },
+  { name: '[url]', default: '—', description: 'Site URL — includes path to auto-filter a section (e.g., example.com/about)' },
   { name: '--sitemap <url>', default: '—', description: 'Explicit URL to sitemap.xml' },
   { name: '--filter <path>', default: 'all', description: 'Path prefix to include (e.g., /research)' },
   { name: '--filter-glob <pattern>', default: '—', description: 'Glob pattern for URL pathname matching' },
@@ -216,7 +216,9 @@ const flags = [
 ];
 
 const examples = [
-  { title: 'Scan a section', code: 'a11yscan example.com --filter "/about"' },
+  { title: 'Scan a section by URL path', code: 'a11yscan example.com/about\n# Reports saved to reports/example.com/about/{timestamp}/' },
+  { title: 'Scan a nested section', code: 'a11yscan example.com/research/articles\n# Reports saved to reports/example.com/research/articles/{timestamp}/' },
+  { title: 'Scan a section with explicit filter', code: 'a11yscan example.com --filter "/about"' },
   { title: 'Exclude sections', code: 'a11yscan example.com --exclude "/blog,/archive"' },
   { title: 'Glob pattern matching', code: 'a11yscan example.com --filter-glob "/*/services/**"' },
   { title: 'Limit scan scope', code: 'a11yscan example.com --filter "/news" --limit 20' },

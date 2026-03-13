@@ -1,10 +1,15 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeMarkdown } from './markdown.js';
-import { readFile, rm } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, rm, mkdtemp } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import type { JsonReport } from './json.js';
 
-const REPORTS_DIR = resolve(process.cwd(), 'reports', '_test-md');
+let REPORTS_DIR: string;
+
+beforeAll(async () => {
+  REPORTS_DIR = await mkdtemp(join(tmpdir(), 'a11yscan-test-md-'));
+});
 
 const sampleReport: JsonReport = {
   meta: {

@@ -1,10 +1,15 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeCSV } from './csv.js';
-import { readFile, rm } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, rm, mkdtemp } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import type { ViolationPattern } from '../analyzer/patterns.js';
 
-const REPORTS_DIR = resolve(process.cwd(), 'reports');
+let REPORTS_DIR: string;
+
+beforeAll(async () => {
+  REPORTS_DIR = await mkdtemp(join(tmpdir(), 'a11yscan-test-csv-'));
+});
 
 const samplePatterns: ViolationPattern[] = [
   {

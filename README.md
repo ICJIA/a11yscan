@@ -126,10 +126,22 @@ If the sitemap isn't at the root, specify it directly:
 a11yscan --sitemap https://example.com/custom-path/sitemap.xml
 ```
 
-### Scan only a specific section (prefix filter)
+### Scan a specific section — just include the path
+
+The fastest way to scan a section: include the path in the URL. a11yscan discovers the sitemap at the site root and auto-filters to that path. Reports are saved to a section-specific subfolder for easy diffing:
 
 ```bash
-# Scan only /about pages
+# Scan only /about pages — reports saved to reports/example.com/about/{timestamp}/
+a11yscan example.com/about
+
+# Scan only /research/articles — reports saved to reports/example.com/research/articles/{timestamp}/
+a11yscan example.com/research/articles
+```
+
+### Scan with explicit prefix filter
+
+```bash
+# Equivalent to the above, but using --filter explicitly
 a11yscan example.com --filter "/about"
 
 # Scan only /research pages, excluding the archive
@@ -211,7 +223,7 @@ a11yscan example.com --ci --output json
 
 ## Report Output
 
-Reports are saved to `./reports/{hostname}/{timestamp}/` — one timestamped subfolder per scan. Previous scans are preserved for diffing and trend analysis.
+Reports are saved to `./reports/{hostname}/{timestamp}/` — one timestamped subfolder per scan. When scanning a section via URL path, reports go to `./reports/{hostname}/{section}/{timestamp}/` for easy diffing between runs.
 
 **Default output (csv + json + html):**
 ```
@@ -221,10 +233,16 @@ reports/
       aria-report-2026-03-13-0948.csv
       aria-report-2026-03-13-0948.json
       aria-report-2026-03-13-0948.html
-    2026-03-13_10-15-00/
-      aria-report-2026-03-13-1015.csv
-      aria-report-2026-03-13-1015.json
-      aria-report-2026-03-13-1015.html
+    about/
+      2026-03-13_10-15-00/
+        aria-report-2026-03-13-1015.csv
+        aria-report-2026-03-13-1015.json
+        aria-report-2026-03-13-1015.html
+    research/articles/
+      2026-03-13_11-00-00/
+        aria-report-2026-03-13-1100.csv
+        aria-report-2026-03-13-1100.json
+        aria-report-2026-03-13-1100.html
 ```
 
 All reports group violations by pattern type. The HTML report features interactive sections per violation type with impact badges, HTML snippets, and expandable URL lists. After each scan, you're prompted to open the HTML report in your browser.
@@ -266,7 +284,8 @@ The core scanning engine. Everything needed to audit a site from the command lin
 - Sitemap fetching with SSRF protection and retry logic
 - URL filtering: prefix, glob (picomatch), exclude, depth, limit
 - Bare URL mode with auto-sitemap discovery
-- Playwright scanner with AxeBuilder API, concurrency (p-limit, default 4)
+- Section URL scanning: `a11yscan example.com/about` auto-filters to `/about` with section-specific report folders
+- Playwright scanner with AxeBuilder API, concurrency (p-limit, default 5)
 - Browser crash recovery with automatic relaunch
 - Pattern analysis: violations grouped by rule + normalized CSS selector
 - Root cause hints (Vuetify, Nuxt, WordPress, Material UI, etc.)
@@ -303,8 +322,8 @@ The core scanning engine. Everything needed to audit a site from the command lin
 - ~~Nuxt 4 + Nuxt UI 4.5.1 static site~~ ✓
 - ~~Deployed to Netlify via `pnpm generate`~~ ✓
 - ~~WCAG 2.1 AA compliant~~ ✓
+- ~~SEO and OpenGraph metadata~~ ✓
 - Interactive demo and pattern gallery
-- SEO and OpenGraph metadata
 
 ## Platform Support
 

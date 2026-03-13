@@ -1,10 +1,15 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeHTML } from './html.js';
-import { readFile, rm } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, rm, mkdtemp } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import type { JsonReport } from './json.js';
 
-const REPORTS_DIR = resolve(process.cwd(), 'reports', '_test-html');
+let REPORTS_DIR: string;
+
+beforeAll(async () => {
+  REPORTS_DIR = await mkdtemp(join(tmpdir(), 'a11yscan-test-html-'));
+});
 
 const sampleReport: JsonReport = {
   meta: {
@@ -143,7 +148,7 @@ describe('writeHTML', () => {
     await rm(REPORTS_DIR, { recursive: true, force: true }).catch(() => {});
 
     const filePath = await writeHTML(sampleReport, 'test-html-autodir', REPORTS_DIR);
-    expect(filePath).toContain('reports');
+    expect(filePath).toContain('test-html-autodir.html');
 
     const content = await readFile(filePath, 'utf-8');
     expect(content.length).toBeGreaterThan(0);

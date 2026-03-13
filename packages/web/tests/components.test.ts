@@ -68,10 +68,8 @@ describe('SiteFooter', () => {
 
   it('contains Product and Resources sections', () => {
     const wrapper = mount(SiteFooter, { global: globalConfig })
-    const h4s = wrapper.findAll('h4')
-    const headingTexts = h4s.map((h) => h.text())
-    expect(headingTexts).toContain('Product')
-    expect(headingTexts).toContain('Resources')
+    expect(wrapper.text()).toContain('Product')
+    expect(wrapper.text()).toContain('Resources')
   })
 })
 

@@ -92,6 +92,7 @@ export function mockNuxtImports() {
     params: {},
     query: {},
   }))
+  vi.stubGlobal('useSeoMeta', vi.fn())
   vi.stubGlobal('watch', vi.fn())
   vi.stubGlobal('definePageMeta', vi.fn())
 

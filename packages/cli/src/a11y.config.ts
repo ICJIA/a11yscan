@@ -20,7 +20,7 @@
  * Tool identity — shown in reports and terminal output.
  */
 export const TOOL_NAME = 'a11yscan';
-export const TOOL_VERSION = '1.1.1';
+export const TOOL_VERSION = '1.2.0';
 
 /**
  * Default output formats when --output is not specified.

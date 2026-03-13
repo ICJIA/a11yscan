@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-03-13
+
+### Added
+
+#### CLI
+- **Section URL scanning** — include a path in the URL to auto-filter: `a11yscan example.com/about` discovers the sitemap at the site root and filters to `/about`
+- **Section-specific report directories** — section scans save to `reports/{hostname}/{section}/{timestamp}/` for easy diffing between runs
+- **Increased default concurrency** — default parallel page scanning raised from 4 to 5
+
+#### Web
+- **Scroll-to-top button** — fixed-position button appears after 300px scroll, fully WCAG AA accessible with keyboard support and aria-label
+- **Navbar scroll-to-top** — clicking the navbar title smoothly scrolls to the top of the page
+
+### Changed
+
+#### CLI
+- `DEFAULT_CONCURRENCY` in `a11y.config.ts` changed from 4 to 5
+- `resolveSitemapUrl()` always discovers sitemap at site root, even when URL includes a path
+
+#### Web
+- Features page updated with section URL scanning description
+- Documentation page updated with section URL examples
+- README updated with section URL documentation, section-specific report directory examples
+
 ## [1.1.1] — 2026-03-13
 
 ### Fixed
@@ -83,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pages: home, features, documentation, roadmap
 - Netlify configuration for pnpm monorepo deployment
 
+[1.2.0]: https://github.com/ICJIA/a11yscan/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ICJIA/a11yscan/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ICJIA/a11yscan/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ICJIA/a11yscan/releases/tag/v1.0.0

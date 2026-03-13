@@ -56,7 +56,7 @@ const sections = [
   {
     title: 'Filtering',
     items: [
-      { icon: 'i-lucide-filter', title: 'Prefix Filter', description: 'Scan only pages under a specific path: --filter "/research". Fast way to audit one section of a large site.' },
+      { icon: 'i-lucide-filter', title: 'Section URL & Prefix Filter', description: 'Include the path in the URL to auto-filter: a11yscan example.com/about. Reports saved to section-specific folders for easy diffing. Or use --filter "/research" explicitly.' },
       { icon: 'i-lucide-regex', title: 'Glob Patterns', description: 'Flexible picomatch-powered matching: --filter-glob "/*/services/**". Combine with prefix filter using AND logic.' },
       { icon: 'i-lucide-minus-circle', title: 'Exclude Paths', description: 'Skip sections with comma-separated prefixes: --exclude "/blog,/archive".' },
       { icon: 'i-lucide-layers', title: 'Depth & Limit', description: 'Control scan scope with --depth (URL path depth) and --limit (max pages to scan).' },
@@ -78,7 +78,7 @@ const sections = [
       { icon: 'i-lucide-table', title: 'CSV Reports', description: '11-column spreadsheet grouped by violation type. Includes HTML snippet, failure summary, and pipe-separated affected URLs.' },
       { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Self-contained styled HTML grouped by violation type with impact badges, HTML snippets, and expandable URL lists. Opens directly in your browser.' },
       { icon: 'i-lucide-file-text', title: 'Markdown Reports', description: 'GitHub-flavored Markdown with summary table, violation sections, and collapsible URL lists. Paste directly into GitHub issues or PRs.' },
-      { icon: 'i-lucide-folder', title: 'Scan History', description: 'Reports saved to ./reports/{hostname}/{timestamp}/. Every scan is preserved in a timestamped folder for diffing and trend analysis.' },
+      { icon: 'i-lucide-folder', title: 'Scan History', description: 'Reports saved to ./reports/{hostname}/{section?}/{timestamp}/. Section scans get their own subfolder. Every scan is preserved for diffing and trend analysis.' },
     ],
   },
 ];

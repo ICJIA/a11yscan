@@ -1,10 +1,15 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeJSON, sanitizeFilename, groupPatterns, siteDir, prepareSiteReportsDir, type JsonReport } from './json.js';
-import { readFile, rm, stat } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, rm, stat, mkdtemp } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import type { ViolationPattern } from '../analyzer/patterns.js';
 
-const REPORTS_DIR = resolve(process.cwd(), 'reports');
+let REPORTS_DIR: string;
+
+beforeAll(async () => {
+  REPORTS_DIR = await mkdtemp(join(tmpdir(), 'a11yscan-test-json-'));
+});
 
 const sampleReport: JsonReport = {
   meta: {
@@ -50,7 +55,7 @@ afterAll(async () => {
 
 describe('writeJSON', () => {
   it('produces valid JSON with correct meta shape', async () => {
-    const filePath = await writeJSON(sampleReport, 'test-json-output');
+    const filePath = await writeJSON(sampleReport, 'test-json-output', REPORTS_DIR);
     const content = await readFile(filePath, 'utf-8');
     const parsed = JSON.parse(content);
 
@@ -63,7 +68,7 @@ describe('writeJSON', () => {
   });
 
   it('includes patterns array', async () => {
-    const filePath = await writeJSON(sampleReport, 'test-json-patterns');
+    const filePath = await writeJSON(sampleReport, 'test-json-patterns', REPORTS_DIR);
     const content = await readFile(filePath, 'utf-8');
     const parsed = JSON.parse(content);
 
@@ -73,7 +78,7 @@ describe('writeJSON', () => {
   });
 
   it('includes skippedUrls array', async () => {
-    const filePath = await writeJSON(sampleReport, 'test-json-skipped');
+    const filePath = await writeJSON(sampleReport, 'test-json-skipped', REPORTS_DIR);
     const content = await readFile(filePath, 'utf-8');
     const parsed = JSON.parse(content);
 
