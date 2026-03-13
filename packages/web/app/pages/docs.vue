@@ -29,6 +29,69 @@ a11yscan --sitemap https://example.com/sitemap.xml</pre>
         </div>
       </div>
 
+      <!-- Two Ways to Scan -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Two ways to scan</h2>
+        <p class="text-neutral-500 dark:text-neutral-400 mb-6">
+          a11yscan supports two modes: <strong class="text-neutral-700 dark:text-neutral-300">direct mode</strong> for quick, scriptable scans
+          and <strong class="text-neutral-700 dark:text-neutral-300">interactive mode</strong> for guided setup when you're not sure what flags to use.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-6">
+          <!-- Direct Mode -->
+          <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm font-bold">1</span>
+              <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Direct mode</h3>
+            </div>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+              Pass a URL and flags directly. Best for repeat scans, scripts, and CI/CD.
+            </p>
+            <div class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
+              <pre class="p-4 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto"><span class="text-neutral-400"># Scan an entire site</span>
+a11yscan example.com
+
+<span class="text-neutral-400"># Scan just the /about section</span>
+a11yscan example.com/about
+
+<span class="text-neutral-400"># Exclude paths, limit pages</span>
+a11yscan example.com --filter "/research" \
+  --exclude "/research/archive" --limit 50</pre>
+            </div>
+          </div>
+
+          <!-- Interactive Mode -->
+          <div class="rounded-xl border-2 border-primary-300 dark:border-primary-700 bg-white dark:bg-neutral-900/50 p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm font-bold">2</span>
+              <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Interactive wizard</h3>
+            </div>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+              Run <code class="bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-xs font-mono">a11yscan</code> with no arguments.
+              The wizard walks you through every option step by step.
+            </p>
+            <div class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
+              <div class="px-3 py-1.5 border-b border-neutral-300 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400 font-mono">Terminal</div>
+              <pre class="p-4 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">$ a11yscan
+
+<span class="text-primary-500">?</span> Site URL: <span class="text-neutral-400">example.com</span>
+<span class="text-primary-500">?</span> Sitemap URL (enter for auto): <span class="text-neutral-400"></span>
+<span class="text-primary-500">?</span> Include path: <span class="text-neutral-400">/about</span>
+<span class="text-primary-500">?</span> Exclude paths: <span class="text-neutral-400">/about/archive</span>
+<span class="text-primary-500">?</span> Output formats: <span class="text-neutral-400">csv,json,html</span>
+<span class="text-primary-500">?</span> Concurrency (1-5): <span class="text-neutral-400">5</span>
+<span class="text-primary-500">?</span> Reports to keep: <span class="text-neutral-400">3</span>
+
+Starting scan...</pre>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Both modes produce identical results. Use direct mode when you know what you want; use the wizard when you're exploring a new site or want to double-check your configuration before scanning.
+        </p>
+      </div>
+
       <!-- CLI Reference -->
       <div class="mt-16">
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6">CLI reference</h2>

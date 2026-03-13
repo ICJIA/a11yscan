@@ -188,21 +188,33 @@ a11yscan example.com --output csv,json,html,md
 # Produces a GitHub-flavored Markdown report alongside the defaults
 ```
 
-### Interactive wizard — just run `a11yscan`
+### Two ways to scan
 
-Run `a11yscan` with no arguments to launch the interactive scan builder. It walks you through:
+a11yscan supports **direct mode** (pass a URL and flags) and **interactive mode** (guided step-by-step setup). Both produce identical results.
 
-1. Site URL (required)
-2. Sitemap location (default: auto-discover at root)
-3. Directories to include (e.g., `/about`)
-4. Directories to exclude (e.g., `/about/publications`)
-5. Output formats (default: csv, json, html)
-6. Concurrency (default: 5)
-7. Report retention (default: keep latest 3)
+#### Direct mode — for repeat scans, scripts, and CI/CD
 
 ```bash
-a11yscan
-# Launches interactive wizard
+a11yscan example.com/about
+a11yscan example.com --filter "/research" --exclude "/research/archive" --limit 50
+```
+
+#### Interactive wizard — just run `a11yscan`
+
+Run `a11yscan` with no arguments to launch the interactive scan builder. The wizard walks you through every option — no flags to memorize:
+
+```
+$ a11yscan
+
+? Site URL: example.com
+? Sitemap URL (enter for auto):
+? Include path: /about
+? Exclude paths: /about/archive
+? Output formats: csv,json,html
+? Concurrency (1-5): 5
+? Reports to keep: 3
+
+Starting scan...
 ```
 
 ### CI/CD mode

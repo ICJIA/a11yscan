@@ -219,7 +219,7 @@ const features = [
   { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel with Playwright. A 500-page site takes minutes, not hours.' },
   { icon: 'i-lucide-file-text', title: 'CSV + JSON + HTML Reports', description: 'Three output formats by default. The HTML report is self-contained and opens directly in your browser.' },
   { icon: 'i-lucide-brain', title: 'LLM-Ready JSON', description: 'Each pattern includes the HTML snippet, failure summary, and raw selector. Feed it to an LLM for automated fix suggestions.' },
-  { icon: 'i-lucide-terminal', title: 'Zero Config', description: 'Just give it a URL. a11yscan auto-discovers the sitemap, auto-prepends https://, and uses sensible defaults.' },
+  { icon: 'i-lucide-terminal', title: 'Direct or Interactive', description: 'Pass a URL and flags for scripted scans, or run a11yscan with no arguments to launch the interactive wizard that walks you through every option step by step.' },
   { icon: 'i-lucide-git-branch', title: 'CI/CD Mode', description: 'Machine-readable JSON output, exit code 0 for clean or 1 for violations. Drop it into GitHub Actions in two lines.' },
   { icon: 'i-lucide-filter', title: 'Flexible Filtering', description: 'Scan specific sections with --filter, glob patterns with --filter-glob, or exclude paths. Combine them with AND logic.' },
   { icon: 'i-lucide-shield-check', title: 'SSRF Protection', description: 'Blocks scanning of localhost, private IPs, and non-HTTP protocols. Safe to run against untrusted sitemaps.' },

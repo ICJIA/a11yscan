@@ -51,7 +51,7 @@ const sections = [
       { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel using Playwright with p-limit concurrency control. Default: 5 parallel pages.' },
       { icon: 'i-lucide-refresh-cw', title: 'Crash Recovery', description: 'If Chromium crashes mid-scan, the browser automatically relaunches and scanning continues. No lost progress.' },
       { icon: 'i-lucide-shield-check', title: 'SSRF Protection', description: 'Blocks localhost, private IPs (10.x, 172.16-31.x, 192.168.x), link-local, and non-HTTP protocols.' },
-      { icon: 'i-lucide-wand-sparkles', title: 'Interactive Wizard', description: 'Run a11yscan with no arguments to launch a guided setup. Walks through site URL, sitemap, include/exclude paths, output formats, and concurrency.' },
+      { icon: 'i-lucide-wand-sparkles', title: 'Interactive Wizard', description: 'Run a11yscan with no arguments to launch a step-by-step guided setup. Prompts for site URL, sitemap location, directories to include or exclude, output formats, concurrency, and report retention — then shows a summary before scanning. No flags to memorize.' },
     ],
   },
   {
