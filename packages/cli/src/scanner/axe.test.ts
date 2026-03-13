@@ -12,16 +12,45 @@ describe('buildAxeConfig', () => {
     expect(config.runOnly.values.length).toBeGreaterThan(0);
   });
 
-  it('includes expected rules (color-contrast, aria-roles, etc.)', () => {
+  it('includes all WCAG 2.1 AA rule categories', () => {
     const config = buildAxeConfig();
     const rules = config.runOnly.values;
 
-    expect(rules).toContain('color-contrast');
+    // ARIA
     expect(rules).toContain('aria-roles');
+    expect(rules).toContain('aria-required-attr');
+    expect(rules).toContain('aria-valid-attr-value');
+    expect(rules).toContain('aria-hidden-focus');
+    // Accessible names
     expect(rules).toContain('image-alt');
     expect(rules).toContain('link-name');
     expect(rules).toContain('button-name');
     expect(rules).toContain('label');
+    expect(rules).toContain('select-name');
+    // Color contrast
+    expect(rules).toContain('color-contrast');
+    // Document structure
+    expect(rules).toContain('document-title');
+    expect(rules).toContain('html-has-lang');
+    expect(rules).toContain('heading-order');
+    expect(rules).toContain('bypass');
+    // Tables
+    expect(rules).toContain('td-has-header');
+    // Forms
+    expect(rules).toContain('autocomplete-valid');
+    // Media
+    expect(rules).toContain('video-caption');
+    // Visual
+    expect(rules).toContain('meta-viewport');
+    expect(rules).toContain('target-size');
+    // Best-practice rules
+    expect(rules).toContain('empty-heading');
+    expect(rules).toContain('landmark-one-main');
+    expect(rules).toContain('region');
+    expect(rules).toContain('skip-link');
+    expect(rules).toContain('page-has-heading-one');
+    // Should have 93 rules total
+    expect(rules.length).toBe(96);
   });
 
   it('does NOT include color-contrast-enhanced (AAA rule was removed)', () => {

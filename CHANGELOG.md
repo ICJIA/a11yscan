@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-03-13
+
+### Changed
+
+#### CLI
+- **Expanded axe-core rule set from 13 to 96 rules** — the most thorough open-source axe-core scan possible:
+  - ARIA roles and attributes (24 rules)
+  - Accessible names and labels (18 rules)
+  - Color contrast and link distinguishability (2 rules)
+  - Document structure: lang, title, heading order, bypass (10 rules)
+  - Landmarks and regions: main, banner, contentinfo, skip link (11 rules)
+  - Lists and definition lists (4 rules)
+  - Tables: headers, captions, data cells, scope (6 rules)
+  - Forms: autocomplete, labels, accesskeys, tabindex (4 rules)
+  - Interactive elements: nesting, focus, scrollable regions, presentation role (4 rules)
+  - Media: audio/video captions, autoplay (3 rules)
+  - Visual: viewport zoom, orientation lock, inline spacing, blink/marquee, meta-refresh, target size (9 rules)
+- Includes all WCAG 2.1 AA rules plus all axe-core best-practice rules for maximum coverage
+- Previously only scanned for ARIA roles, accessible names, and color contrast
+
 ## [1.3.0] — 2026-03-13
 
 ### Added
@@ -127,6 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pages: home, features, documentation, roadmap
 - Netlify configuration for pnpm monorepo deployment
 
+[1.4.0]: https://github.com/ICJIA/a11yscan/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ICJIA/a11yscan/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ICJIA/a11yscan/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ICJIA/a11yscan/compare/v1.1.0...v1.1.1

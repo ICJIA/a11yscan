@@ -49,7 +49,7 @@ export default defineNuxtConfig({
             license: 'https://opensource.org/licenses/MIT',
             datePublished: '2026-03-12',
             dateModified: '2026-03-13',
-            softwareVersion: '1.3.0',
+            softwareVersion: '1.4.0',
             author: {
               '@type': 'Organization',
               name: 'Illinois Criminal Justice Information Authority',

@@ -4,7 +4,7 @@
 
 # a11yscan
 
-A pattern-aware CLI tool that audits websites for ARIA role violations, missing accessible names, and color contrast failures using axe-core. Built for web teams managing large multi-page or SPA-based sites under ADA Title II compliance deadlines.
+A pattern-aware CLI tool that audits websites for WCAG 2.1 AA violations using axe-core — covering ARIA roles, accessible names, color contrast, document structure, landmarks, tables, forms, media, and more (96 rules). Built for web teams managing large multi-page or SPA-based sites under ADA Title II compliance deadlines.
 
 Instead of dumping thousands of per-page violations, a11yscan groups findings by **pattern** — the combination of violation type and normalized CSS selector. A single Vuetify `v-autocomplete` generating a bad `role="listbox"` on 340 pages is reported as one pattern with 340 affected URLs, not 340 separate violations. This transforms a 1,860-page audit into a 12-pattern remediation list.
 
@@ -304,7 +304,7 @@ All reports group violations by pattern type. The HTML report features interacti
 
 ## Configuration
 
-All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for tool identity, default output formats (csv, json, html, md), concurrency limits, timeouts, axe-core rules, blocked hosts, root cause patterns, exit codes, and CSV column headers.
+All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for tool identity, default output formats (csv, json, html, md), concurrency limits, report retention, timeouts, blocked hosts, root cause patterns, exit codes, and CSV column headers. The axe-core rule set (96 rules covering WCAG 2.1 AA + best practices) is defined in `packages/cli/src/scanner/axe.ts`.
 
 ## Testing
 
