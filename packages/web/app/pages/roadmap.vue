@@ -59,7 +59,18 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Roadmap — a11yscan' });
+useHead({
+  title: 'Roadmap — a11yscan',
+  link: [{ rel: 'canonical', href: 'https://a11yscan.dev/roadmap' }],
+});
+useSeoMeta({
+  description: 'a11yscan development roadmap: CLI scanner, extended reporters, interactive wizard, Puppeteer fallback, and marketing site. Built in independent phases.',
+  ogTitle: 'Roadmap — a11yscan',
+  ogDescription: 'a11yscan development roadmap: CLI scanner, extended reporters, interactive wizard, and more.',
+  ogImage: 'https://a11yscan.dev/og-image.png',
+  ogUrl: 'https://a11yscan.dev/roadmap',
+  twitterCard: 'summary_large_image',
+});
 
 const phases = [
   {

@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         { name: 'twitter:title', content: 'a11yscan — Pattern-aware accessibility auditor' },
         { name: 'twitter:description', content: 'Groups thousands of accessibility violations into actionable patterns.' },
         { name: 'twitter:image', content: 'https://a11yscan.dev/og-image.png' },
+        { name: 'theme-color', content: '#0a0a0a' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },

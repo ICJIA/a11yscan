@@ -185,7 +185,18 @@ alias a11yscan='node ./packages/cli/dist/index.js'</pre>
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Documentation — a11yscan' });
+useHead({
+  title: 'Documentation — a11yscan',
+  link: [{ rel: 'canonical', href: 'https://a11yscan.dev/docs' }],
+});
+useSeoMeta({
+  description: 'Install a11yscan, configure CLI flags, and run your first accessibility scan in minutes. Includes system requirements, examples, and CI/CD setup.',
+  ogTitle: 'Documentation — a11yscan',
+  ogDescription: 'Install a11yscan, configure CLI flags, and run your first accessibility scan in minutes.',
+  ogImage: 'https://a11yscan.dev/og-image.png',
+  ogUrl: 'https://a11yscan.dev/docs',
+  twitterCard: 'summary_large_image',
+});
 
 const flags = [
   { name: '[url]', default: '—', description: 'Site URL — auto-appends /sitemap.xml' },

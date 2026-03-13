@@ -198,7 +198,18 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'a11yscan — Pattern-aware accessibility auditor' });
+useHead({
+  title: 'a11yscan — Pattern-aware accessibility auditor',
+  link: [{ rel: 'canonical', href: 'https://a11yscan.dev/' }],
+});
+useSeoMeta({
+  description: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items. Built for ADA Title II compliance.',
+  ogTitle: 'a11yscan — Pattern-aware accessibility auditor',
+  ogDescription: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items.',
+  ogImage: 'https://a11yscan.dev/og-image.png',
+  ogUrl: 'https://a11yscan.dev/',
+  twitterCard: 'summary_large_image',
+});
 
 const features = [
   { icon: 'i-lucide-scan-search', title: 'Pattern Grouping', description: 'Violations grouped by axe-core rule + CSS selector. One broken component = one pattern, regardless of how many pages it appears on.' },

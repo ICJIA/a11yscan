@@ -27,7 +27,18 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Features — a11yscan' });
+useHead({
+  title: 'Features — a11yscan',
+  link: [{ rel: 'canonical', href: 'https://a11yscan.dev/features' }],
+});
+useSeoMeta({
+  description: 'Auto sitemap discovery, concurrent scanning, pattern grouping, root cause hints, and four report formats. Everything a11yscan does in Phase 1.',
+  ogTitle: 'Features — a11yscan',
+  ogDescription: 'Auto sitemap discovery, concurrent scanning, pattern grouping, root cause hints, and four report formats.',
+  ogImage: 'https://a11yscan.dev/og-image.png',
+  ogUrl: 'https://a11yscan.dev/features',
+  twitterCard: 'summary_large_image',
+});
 
 const sections = [
   {
