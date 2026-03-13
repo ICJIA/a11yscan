@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-03-13
+
+### Changed
+
+#### CLI
+- **Redesigned HTML report** — collapsible violation groups with color-coded impact borders, jump-nav table of contents, and severity-sorted layout (critical/serious auto-expanded, moderate/minor collapsed)
+- **Summary dashboard** — top-of-report card grid showing counts for critical, serious, moderate, and minor patterns at a glance
+- **Collapsible rule reference** — the 96-rule reference table is now collapsed by default to reduce visual noise
+- **Collapsible skipped URLs** — skipped URL section collapsed by default
+- **Fixed rule reference links** — Deque University links now use correct `4.10` version path (previously `4.x`, which returned 404)
+
 ## [1.4.0] — 2026-03-13
 
 ### Changed
@@ -147,6 +158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pages: home, features, documentation, roadmap
 - Netlify configuration for pnpm monorepo deployment
 
+[1.5.0]: https://github.com/ICJIA/a11yscan/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ICJIA/a11yscan/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ICJIA/a11yscan/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ICJIA/a11yscan/compare/v1.1.1...v1.2.0

@@ -77,7 +77,7 @@ const sections = [
     items: [
       { icon: 'i-lucide-file-json', title: 'JSON Reports', description: 'Structured report with patternGroups and flat patterns array. Grouped by violation type for easy consumption by LLMs and CI/CD pipelines.' },
       { icon: 'i-lucide-table', title: 'CSV Reports', description: '11-column spreadsheet grouped by violation type. Includes HTML snippet, failure summary, and pipe-separated affected URLs.' },
-      { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Self-contained styled HTML grouped by violation type with impact badges, HTML snippets, and expandable URL lists. Opens directly in your browser.' },
+      { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Collapsible violation groups sorted by severity with color-coded impact borders, jump-nav table of contents, summary dashboard, LLM-ready JSON download, and 96-rule reference. Critical and serious violations auto-expand.' },
       { icon: 'i-lucide-file-text', title: 'Markdown Reports', description: 'GitHub-flavored Markdown with summary table, violation sections, and collapsible URL lists. Paste directly into GitHub issues or PRs.' },
       { icon: 'i-lucide-folder', title: 'Scan History & Auto-Pruning', description: 'Reports saved to ./reports/{hostname}/{section?}/{timestamp}/. Auto-prunes to keep latest 3 runs (configurable via --keep). Use `a11yscan prune` to manage old reports.' },
     ],

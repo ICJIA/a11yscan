@@ -291,7 +291,7 @@ reports/
         aria-report-2026-03-13-1100.html
 ```
 
-All reports group violations by pattern type. The HTML report features interactive sections per violation type with impact badges, HTML snippets, and expandable URL lists. After each scan, you're prompted to open the HTML report in your browser.
+All reports group violations by pattern type. The HTML report features collapsible violation groups sorted by severity (critical/serious auto-expanded), color-coded impact borders, a jump-nav table of contents, summary dashboard, LLM-ready JSON/CSV download links, and a collapsible 96-rule axe-core reference. After each scan, you're prompted to open the HTML report in your browser.
 
 ## Exit Codes
 
