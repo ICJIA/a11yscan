@@ -18,9 +18,8 @@ export const AXE_RULES = [
   'image-alt',
   'label',
   'link-name',
-  // Color Contrast
+  // Color Contrast (WCAG 2.1 AA)
   'color-contrast',
-  'color-contrast-enhanced',
 ] as const;
 
 export type AxeRuleId = (typeof AXE_RULES)[number];

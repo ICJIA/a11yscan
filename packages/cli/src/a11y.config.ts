@@ -124,9 +124,8 @@ export const AXE_RULE_IDS = [
   'label',                    // Form elements must have labels
   'link-name',                // Links must have discernible text
 
-  // ── Color Contrast ──
-  'color-contrast',           // Elements must meet minimum color contrast (WCAG AA)
-  'color-contrast-enhanced',  // Elements must meet enhanced color contrast (WCAG AAA)
+  // ── Color Contrast (WCAG 2.1 AA) ──
+  'color-contrast',           // Elements must meet minimum color contrast ratio (4.5:1)
 ] as const;
 
 /**
