@@ -32,19 +32,19 @@
                 <span class="h-3 w-3 rounded-full bg-red-500/80" aria-hidden="true" />
                 <span class="h-3 w-3 rounded-full bg-yellow-500/80" aria-hidden="true" />
                 <span class="h-3 w-3 rounded-full bg-green-500/80" aria-hidden="true" />
-                <span class="ml-2 text-xs text-neutral-400 dark:text-neutral-600 font-mono">Terminal</span>
+                <span class="ml-2 text-xs text-neutral-400 dark:text-neutral-400 font-mono">Terminal</span>
               </div>
               <div class="p-5 font-mono text-sm leading-7">
-                <div><span class="text-neutral-400 dark:text-neutral-600">$</span> <span class="text-neutral-900 dark:text-white">a11yscan example.com</span></div>
-                <div class="mt-3 text-neutral-500">Checking for sitemap at https://example.com/sitemap.xml... <span class="text-green-600 dark:text-green-400">found</span></div>
-                <div class="text-neutral-500">Fetching sitemap... <span class="text-green-600 dark:text-green-400">1,860 URLs found</span></div>
-                <div class="text-neutral-500">Scanning 1,860 pages (concurrency: 4)...</div>
+                <div><span class="text-neutral-400 dark:text-neutral-400">$</span> <span class="text-neutral-900 dark:text-white">a11yscan example.com</span></div>
+                <div class="mt-3 text-neutral-500 dark:text-neutral-400">Checking for sitemap at https://example.com/sitemap.xml... <span class="text-green-600 dark:text-green-400">found</span></div>
+                <div class="text-neutral-500 dark:text-neutral-400">Fetching sitemap... <span class="text-green-600 dark:text-green-400">1,860 URLs found</span></div>
+                <div class="text-neutral-500 dark:text-neutral-400">Scanning 1,860 pages (concurrency: 4)...</div>
                 <div class="mt-3 font-semibold text-neutral-900 dark:text-white">Scan complete.</div>
-                <div class="mt-2 text-neutral-500">  Pages scanned:   <span class="text-green-600 dark:text-green-400 font-semibold">1,860</span></div>
-                <div class="text-neutral-500">  Total violations: <span class="text-yellow-600 dark:text-yellow-400 font-semibold">4,200</span></div>
-                <div class="text-neutral-500">  Patterns found:   <span class="text-primary-500 dark:text-primary-400 font-bold">12</span></div>
-                <div class="mt-2 text-neutral-400 dark:text-neutral-600">  Reports saved to ./reports/example.com/</div>
-                <div class="mt-1 text-neutral-500">View HTML report in browser? (y/N) <span class="text-neutral-900 dark:text-white">y</span></div>
+                <div class="mt-2 text-neutral-500 dark:text-neutral-400">  Pages scanned:   <span class="text-green-600 dark:text-green-400 font-semibold">1,860</span></div>
+                <div class="text-neutral-500 dark:text-neutral-400">  Total violations: <span class="text-yellow-600 dark:text-yellow-400 font-semibold">4,200</span></div>
+                <div class="text-neutral-500 dark:text-neutral-400">  Patterns found:   <span class="text-primary-500 dark:text-primary-400 font-bold">12</span></div>
+                <div class="mt-2 text-neutral-400 dark:text-neutral-400">  Reports saved to ./reports/example.com/</div>
+                <div class="mt-1 text-neutral-500 dark:text-neutral-400">View HTML report in browser? (y/N) <span class="text-neutral-900 dark:text-white">y</span></div>
               </div>
             </div>
           </div>
@@ -65,13 +65,13 @@
           <div class="rounded-xl border border-red-500/20 bg-red-500/5 p-6">
             <div class="text-sm font-semibold text-red-500 dark:text-red-400 mb-2">Traditional scanners</div>
             <div class="text-4xl font-extrabold text-red-500 dark:text-red-400">2,745</div>
-            <div class="text-sm text-neutral-500 mt-1">violations found</div>
+            <div class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">violations found</div>
             <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-4">Not actionable. You can't tell if there are 2,745 unique problems or 5 repeated patterns. Developers give up before they start.</p>
           </div>
           <div class="rounded-xl border border-primary-500/20 bg-primary-500/5 p-6">
             <div class="text-sm font-semibold text-primary-500 dark:text-primary-400 mb-2">a11yscan</div>
             <div class="text-4xl font-extrabold text-primary-500 dark:text-primary-400">12</div>
-            <div class="text-sm text-neutral-500 mt-1">patterns identified</div>
+            <div class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">patterns identified</div>
             <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-4">Each pattern shows what's broken, which component causes it, how many pages are affected, and a link to the fix guide. Fix 12 things, ship it.</p>
           </div>
         </div>
@@ -135,16 +135,16 @@
                 <span class="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 shrink-0" />
                 <div>
                   <span class="font-mono text-sm text-cyan-600 dark:text-cyan-400">{{ field.name }}</span>
-                  <span class="text-sm text-neutral-500 ml-2">{{ field.description }}</span>
+                  <span class="text-sm text-neutral-500 dark:text-neutral-400 ml-2">{{ field.description }}</span>
                 </div>
               </li>
             </ul>
           </div>
           <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
             <div class="flex items-center gap-2 px-4 py-3 bg-neutral-200 dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-800">
-              <span class="text-xs text-neutral-400 dark:text-neutral-600 font-mono">aria-report.json</span>
+              <span class="text-xs text-neutral-400 dark:text-neutral-400 font-mono">aria-report.json</span>
             </div>
-            <pre class="p-5 text-xs font-mono leading-6 text-neutral-700 dark:text-neutral-300 overflow-x-auto"><span class="text-neutral-400 dark:text-neutral-600">{</span>
+            <pre class="p-5 text-xs font-mono leading-6 text-neutral-700 dark:text-neutral-300 overflow-x-auto"><span class="text-neutral-400 dark:text-neutral-400">{</span>
   <span class="text-primary-600 dark:text-primary-400">"patternId"</span>: <span class="text-yellow-600 dark:text-yellow-400">"P001"</span>,
   <span class="text-primary-600 dark:text-primary-400">"violationId"</span>: <span class="text-yellow-600 dark:text-yellow-400">"aria-roles"</span>,
   <span class="text-primary-600 dark:text-primary-400">"impact"</span>: <span class="text-red-600 dark:text-red-400">"critical"</span>,
@@ -153,7 +153,7 @@
   <span class="text-primary-600 dark:text-primary-400">"failureSummary"</span>: <span class="text-yellow-600 dark:text-yellow-400">"Role 'listbox' is not allowed"</span>,
   <span class="text-primary-600 dark:text-primary-400">"rootCauseHint"</span>: <span class="text-yellow-600 dark:text-yellow-400">"Likely Vuetify component"</span>,
   <span class="text-primary-600 dark:text-primary-400">"suggestedFix"</span>: <span class="text-yellow-600 dark:text-yellow-400">"https://dequeuniversity.com/..."</span>
-<span class="text-neutral-400 dark:text-neutral-600">}</span></pre>
+<span class="text-neutral-400 dark:text-neutral-400">}</span></pre>
           </div>
         </div>
       </div>
@@ -183,7 +183,7 @@
         </p>
         <div class="mt-8 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 inline-block px-8 py-4">
           <code class="font-mono text-sm text-neutral-700 dark:text-neutral-300">
-            <span class="text-neutral-400 dark:text-neutral-600">$</span> pnpm add -g a11yscan && a11yscan <span class="text-primary-500 dark:text-primary-400">your-site.com</span>
+            <span class="text-neutral-400 dark:text-neutral-400">$</span> pnpm add -g a11yscan && a11yscan <span class="text-primary-500 dark:text-primary-400">your-site.com</span>
           </code>
         </div>
         <div class="mt-8 flex justify-center gap-3">

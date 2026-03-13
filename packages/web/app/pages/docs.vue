@@ -10,11 +10,11 @@
       <div class="mt-16">
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Installation</h2>
         <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
-          <div class="px-4 py-2 border-b border-neutral-300 dark:border-neutral-800 text-xs text-neutral-500 font-mono">macOS / Linux</div>
+          <div class="px-4 py-2 border-b border-neutral-300 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400 font-mono">macOS / Linux</div>
           <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">pnpm add -g a11yscan
 npx playwright install chromium</pre>
         </div>
-        <p class="mt-4 text-sm text-neutral-500">Windows requires WSL2 with Ubuntu. See the <a href="https://github.com/ICJIA/a11yscan#windows-wsl2-required" target="_blank" rel="noopener noreferrer" class="text-primary-500 dark:text-primary-400 hover:underline">README</a> for details.</p>
+        <p class="mt-4 text-sm text-neutral-500 dark:text-neutral-400">Windows requires WSL2 with Ubuntu. See the <a href="https://github.com/ICJIA/a11yscan#windows-wsl2-required" target="_blank" rel="noopener noreferrer" class="text-primary-500 dark:text-primary-400 hover:underline">README</a> for details.</p>
       </div>
 
       <!-- Quick Start -->
@@ -22,7 +22,7 @@ npx playwright install chromium</pre>
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Quick start</h2>
         <p class="text-neutral-500 dark:text-neutral-400 mb-4">Just give it a URL. Protocol and /sitemap.xml are optional:</p>
         <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
-          <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto"><span class="text-neutral-400 dark:text-neutral-600"># These are all equivalent:</span>
+          <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto"><span class="text-neutral-400 dark:text-neutral-400"># These are all equivalent:</span>
 a11yscan example.com
 a11yscan https://example.com
 a11yscan --sitemap https://example.com/sitemap.xml</pre>
@@ -45,7 +45,7 @@ a11yscan --sitemap https://example.com/sitemap.xml</pre>
             <tbody>
               <tr v-for="flag in flags" :key="flag.name" class="border-t border-neutral-200 dark:border-neutral-800/50">
                 <td class="px-4 py-3 font-mono text-primary-500 dark:text-primary-400 whitespace-nowrap">{{ flag.name }}</td>
-                <td class="px-4 py-3 text-neutral-500 whitespace-nowrap">{{ flag.default }}</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400 whitespace-nowrap">{{ flag.default }}</td>
                 <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">{{ flag.description }}</td>
               </tr>
             </tbody>
@@ -114,7 +114,7 @@ npx playwright install chromium</pre>
           <div>
             <h3 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">CI/CD (GitHub Actions)</h3>
             <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
-              <div class="px-4 py-2 border-b border-neutral-300 dark:border-neutral-800 text-xs text-neutral-500 font-mono">.github/workflows/a11y.yml</div>
+              <div class="px-4 py-2 border-b border-neutral-300 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400 font-mono">.github/workflows/a11y.yml</div>
               <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">- name: Accessibility audit
   run: |
     npx playwright install chromium
@@ -170,13 +170,13 @@ cd a11yscan.dev
 pnpm install
 npx playwright install chromium
 
-<span class="text-neutral-400 dark:text-neutral-600"># Build the CLI</span>
+<span class="text-neutral-400 dark:text-neutral-400"># Build the CLI</span>
 pnpm build
 
-<span class="text-neutral-400 dark:text-neutral-600"># Run tests</span>
+<span class="text-neutral-400 dark:text-neutral-400"># Run tests</span>
 pnpm test
 
-<span class="text-neutral-400 dark:text-neutral-600"># Optional: create a shell alias</span>
+<span class="text-neutral-400 dark:text-neutral-400"># Optional: create a shell alias</span>
 alias a11yscan='node ./packages/cli/dist/index.js'</pre>
         </div>
       </div>

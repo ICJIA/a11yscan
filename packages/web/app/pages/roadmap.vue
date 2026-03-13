@@ -48,7 +48,7 @@
                   :class="phase.status === 'complete' || item.endsWith('✓') ? 'text-primary-500 dark:text-primary-400' : 'text-neutral-400 dark:text-neutral-700'"
                   aria-hidden="true"
                 />
-                <span :class="phase.status === 'complete' || item.endsWith('✓') ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500'">{{ item }}</span>
+                <span :class="phase.status === 'complete' || item.endsWith('✓') ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500 dark:text-neutral-400'">{{ item }}</span>
               </li>
             </ul>
           </div>
