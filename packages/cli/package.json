@@ -1,6 +1,6 @@
 {
   "name": "a11yscan",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Pattern-aware ARIA accessibility auditor CLI",
   "type": "module",
   "bin": {

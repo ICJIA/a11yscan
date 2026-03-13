@@ -4,7 +4,7 @@
 
 # a11yscan
 
-A pattern-aware CLI tool that audits websites for WCAG 2.1 AA violations using axe-core — covering ARIA roles, accessible names, color contrast, document structure, landmarks, tables, forms, media, and more (96 rules). Built for web teams managing large multi-page or SPA-based sites under ADA Title II compliance deadlines.
+A free, open-source, pattern-aware CLI tool that audits websites for WCAG 2.1 AA violations using axe-core — covering ARIA roles, accessible names, color contrast, document structure, landmarks, tables, forms, media, and more (96 rules). No accounts, no pricing tiers, no data leaves your machine. MIT licensed and always will be. Built for web teams managing large multi-page or SPA-based sites under ADA Title II compliance deadlines.
 
 Instead of dumping thousands of per-page violations, a11yscan groups findings by **pattern** — the combination of violation type and normalized CSS selector. A single Vuetify `v-autocomplete` generating a bad `role="listbox"` on 340 pages is reported as one pattern with 340 affected URLs, not 340 separate violations. This transforms a 1,860-page audit into a 12-pattern remediation list.
 
