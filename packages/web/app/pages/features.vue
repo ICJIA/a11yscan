@@ -51,6 +51,7 @@ const sections = [
       { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel using Playwright with p-limit concurrency control. Default: 5 parallel pages.' },
       { icon: 'i-lucide-refresh-cw', title: 'Crash Recovery', description: 'If Chromium crashes mid-scan, the browser automatically relaunches and scanning continues. No lost progress.' },
       { icon: 'i-lucide-shield-check', title: 'SSRF Protection', description: 'Blocks localhost, private IPs (10.x, 172.16-31.x, 192.168.x), link-local, and non-HTTP protocols.' },
+      { icon: 'i-lucide-wand-sparkles', title: 'Interactive Wizard', description: 'Run a11yscan with no arguments to launch a guided setup. Walks through site URL, sitemap, include/exclude paths, output formats, and concurrency.' },
     ],
   },
   {
@@ -78,7 +79,7 @@ const sections = [
       { icon: 'i-lucide-table', title: 'CSV Reports', description: '11-column spreadsheet grouped by violation type. Includes HTML snippet, failure summary, and pipe-separated affected URLs.' },
       { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Self-contained styled HTML grouped by violation type with impact badges, HTML snippets, and expandable URL lists. Opens directly in your browser.' },
       { icon: 'i-lucide-file-text', title: 'Markdown Reports', description: 'GitHub-flavored Markdown with summary table, violation sections, and collapsible URL lists. Paste directly into GitHub issues or PRs.' },
-      { icon: 'i-lucide-folder', title: 'Scan History', description: 'Reports saved to ./reports/{hostname}/{section?}/{timestamp}/. Section scans get their own subfolder. Every scan is preserved for diffing and trend analysis.' },
+      { icon: 'i-lucide-folder', title: 'Scan History & Auto-Pruning', description: 'Reports saved to ./reports/{hostname}/{section?}/{timestamp}/. Auto-prunes to keep latest 3 runs (configurable via --keep). Use `a11yscan prune` to manage old reports.' },
     ],
   },
 ];

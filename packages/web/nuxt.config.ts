@@ -15,9 +15,9 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items.' },
+        { name: 'description', content: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 4,200 line items.' },
         { property: 'og:title', content: 'a11yscan — Pattern-aware accessibility auditor' },
-        { property: 'og:description', content: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items.' },
+        { property: 'og:description', content: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 4,200 line items.' },
         { property: 'og:image', content: 'https://a11yscan.dev/og-image.png' },
         { property: 'og:url', content: 'https://a11yscan.dev' },
         { property: 'og:type', content: 'website' },
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
             license: 'https://opensource.org/licenses/MIT',
             datePublished: '2026-03-12',
             dateModified: '2026-03-13',
-            softwareVersion: '1.2.0',
+            softwareVersion: '1.3.0',
             author: {
               '@type': 'Organization',
               name: 'Illinois Criminal Justice Information Authority',

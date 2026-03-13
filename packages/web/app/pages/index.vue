@@ -12,7 +12,7 @@
             </div>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 dark:text-white tracking-tight leading-[1.1]">
               Fix <span class="text-primary-500 dark:text-primary-400">12 patterns</span>,<br>
-              not 2,745 violations
+              not 4,200 violations
             </h1>
             <p class="mt-6 text-lg text-neutral-500 dark:text-neutral-400 max-w-lg leading-relaxed">
               a11yscan groups accessibility violations by root cause &mdash; the combination of axe-core rule and CSS selector. One Vuetify component broken on 340 pages is one pattern, not 340 line items.
@@ -64,9 +64,9 @@
         <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div class="rounded-xl border border-red-500/20 bg-red-500/5 p-6">
             <div class="text-sm font-semibold text-red-500 dark:text-red-400 mb-2">Traditional scanners</div>
-            <div class="text-4xl font-extrabold text-red-500 dark:text-red-400">2,745</div>
+            <div class="text-4xl font-extrabold text-red-500 dark:text-red-400">4,200</div>
             <div class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">violations found</div>
-            <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-4">Not actionable. You can't tell if there are 2,745 unique problems or 5 repeated patterns. Developers give up before they start.</p>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-4">Not actionable. You can't tell if there are 4,200 unique problems or 5 repeated patterns. Developers give up before they start.</p>
           </div>
           <div class="rounded-xl border border-primary-500/20 bg-primary-500/5 p-6">
             <div class="text-sm font-semibold text-primary-500 dark:text-primary-400 mb-2">a11yscan</div>
@@ -203,9 +203,9 @@ useHead({
   link: [{ rel: 'canonical', href: 'https://a11yscan.dev/' }],
 });
 useSeoMeta({
-  description: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items. Built for ADA Title II compliance.',
+  description: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 4,200 line items. Built for ADA Title II compliance.',
   ogTitle: 'a11yscan — Pattern-aware accessibility auditor',
-  ogDescription: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items.',
+  ogDescription: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 4,200 line items.',
   ogImage: 'https://a11yscan.dev/og-image.png',
   ogImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
   ogUrl: 'https://a11yscan.dev/',

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2026-03-13
+
+### Added
+
+#### CLI
+- **Interactive wizard** — run `a11yscan` with no arguments to walk through site URL, sitemap location, include/exclude paths, output formats, concurrency, and report retention
+- **Report auto-pruning** — `--keep <n>` flag (default: 3) automatically removes old report runs after each scan, keeping the latest N per site/section
+- **`prune` subcommand** — manually prune old reports:
+  - `a11yscan prune` — list all sites with report counts
+  - `a11yscan prune <site>` — prune a specific site
+  - `a11yscan prune <site> --section /about` — prune a specific section
+  - `a11yscan prune --all` — prune all sites at once
+  - `--keep <n>` — control how many runs to retain (default: 3)
+- **`DEFAULT_KEEP_REPORTS`** config value in `a11y.config.ts`
+
+### Changed
+
+#### Web
+- Hero and comparison card numbers updated from 2,745 to 4,200 to match OG image screenshot
+
 ## [1.2.0] — 2026-03-13
 
 ### Added
@@ -107,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pages: home, features, documentation, roadmap
 - Netlify configuration for pnpm monorepo deployment
 
+[1.3.0]: https://github.com/ICJIA/a11yscan/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ICJIA/a11yscan/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ICJIA/a11yscan/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ICJIA/a11yscan/compare/v1.0.0...v1.1.0

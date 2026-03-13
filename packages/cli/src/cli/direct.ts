@@ -12,13 +12,14 @@ import { buildAxeConfig } from '../scanner/axe.js';
 import { ScannerManager } from '../scanner/playwright.js';
 import { analyzePatterns, type ViolationPattern } from '../analyzer/patterns.js';
 import { writeCSV } from '../reporter/csv.js';
-import { writeJSON, sanitizeFilename, prepareSiteReportsDir, groupPatterns, type JsonReport, type SkippedUrl } from '../reporter/json.js';
+import { writeJSON, sanitizeFilename, prepareSiteReportsDir, groupPatterns, autoPrune, pruneReports, listSites, listRuns, type JsonReport, type SkippedUrl } from '../reporter/json.js';
 import { writeHTML } from '../reporter/html.js';
 import { writeMarkdown } from '../reporter/markdown.js';
 import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { runWizard } from './wizard.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -123,8 +124,27 @@ export function createProgram(): Command {
     .option('--output <formats>', 'Comma-separated output formats: csv, json, html', 'csv,json,html')
     .option('--filename <name>', 'Base filename for reports')
     .option('--concurrency <n>', 'Parallel pages to scan (1-5)', parseInt, 5)
+    .option('--keep <n>', 'Report runs to keep per site/section (0 = no pruning)', parseInt, 3)
     .option('--ci', 'CI mode: minimal output, exit 1 on violations', false)
     .action(async (url, opts) => {
+      // No URL and no --sitemap: launch interactive wizard
+      if (!url && !opts.sitemap && !opts.ci) {
+        const wizardResult = await runWizard();
+        url = wizardResult.siteUrl;
+        if (wizardResult.sitemapUrl) {
+          opts.sitemap = wizardResult.sitemapUrl;
+        }
+        if (wizardResult.filter) {
+          opts.filter = wizardResult.filter;
+        }
+        if (wizardResult.exclude) {
+          opts.exclude = wizardResult.exclude;
+        }
+        opts.output = wizardResult.output;
+        opts.concurrency = wizardResult.concurrency;
+        opts.keep = wizardResult.keep;
+      }
+
       // Resolve sitemap URL from positional arg or --sitemap flag
       let sitemapUrl: string | undefined = opts.sitemap;
 
@@ -180,6 +200,105 @@ export function createProgram(): Command {
       await runScan(opts, version);
     });
 
+  // Subcommand: prune old report runs
+  program
+    .command('prune')
+    .description('Remove old report runs, keeping the latest N per site/section')
+    .argument('[site]', 'Site hostname to prune (omit to list all sites)')
+    .option('--keep <n>', 'Number of runs to keep', parseInt, 3)
+    .option('--section <path>', 'Section path within the site (e.g., /about)')
+    .option('--all', 'Prune all sites', false)
+    .action(async (site, pruneOpts) => {
+      const { resolve: resolvePath } = await import('node:path');
+      const { readdir } = await import('node:fs/promises');
+      const reportsRoot = resolvePath(process.cwd(), 'reports');
+
+      // List sites if no site specified and not --all
+      if (!site && !pruneOpts.all) {
+        const sites = await listSites();
+        if (sites.length === 0) {
+          console.log(chalk.yellow('No report sites found in ./reports/'));
+          process.exit(0);
+        }
+        console.log(chalk.bold('\nSites with reports:\n'));
+        for (const s of sites) {
+          const runs = await listRuns(s);
+          console.log(`  ${chalk.white(s)} ${chalk.dim(`(${runs.length} run${runs.length !== 1 ? 's' : ''})`)}`);
+        }
+        console.log(chalk.dim('\nUsage: a11yscan prune <site> [--keep 3] [--section /about]'));
+        console.log(chalk.dim('       a11yscan prune --all [--keep 3]\n'));
+        process.exit(0);
+      }
+
+      const keep = pruneOpts.keep;
+
+      // Prune all sites
+      if (pruneOpts.all) {
+        const sites = await listSites();
+        let totalPruned = 0;
+        for (const s of sites) {
+          const siteDir = resolvePath(reportsRoot, s);
+          // Check for section subdirectories vs direct timestamp dirs
+          let entries: string[];
+          try {
+            entries = await readdir(siteDir);
+          } catch {
+            continue;
+          }
+          const timestampPattern = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
+          const hasTimestamps = entries.some((e) => timestampPattern.test(e));
+
+          if (hasTimestamps) {
+            const pruned = await pruneReports(siteDir, keep);
+            totalPruned += pruned.length;
+            if (pruned.length > 0) {
+              console.log(`  ${chalk.white(s)}: pruned ${chalk.yellow(String(pruned.length))} run(s)`);
+            }
+          }
+
+          // Also check section subdirectories
+          for (const entry of entries) {
+            if (!timestampPattern.test(entry)) {
+              const subDir = resolvePath(siteDir, entry);
+              const pruned = await pruneReports(subDir, keep);
+              totalPruned += pruned.length;
+              if (pruned.length > 0) {
+                console.log(`  ${chalk.white(s)}/${entry}: pruned ${chalk.yellow(String(pruned.length))} run(s)`);
+              }
+            }
+          }
+        }
+        console.log(chalk.dim(`\nTotal: ${totalPruned} old run(s) removed (keeping latest ${keep})`));
+        process.exit(0);
+      }
+
+      // Prune a specific site
+      const section = pruneOpts.section?.replace(/^\/+/, '');
+      const targetDir = section
+        ? resolvePath(reportsRoot, site, section)
+        : resolvePath(reportsRoot, site);
+
+      const runs = section ? await listRuns(site, section) : await listRuns(site);
+      if (runs.length === 0) {
+        console.log(chalk.yellow(`No report runs found for ${site}${section ? '/' + section : ''}`));
+        process.exit(0);
+      }
+
+      console.log(chalk.dim(`\n${site}${section ? '/' + section : ''}: ${runs.length} run(s) found`));
+
+      const pruned = await pruneReports(targetDir, keep);
+      if (pruned.length === 0) {
+        console.log(chalk.green(`  Nothing to prune (${runs.length} ≤ ${keep})`));
+      } else {
+        for (const p of pruned) {
+          const dirName = p.split('/').pop();
+          console.log(`  ${chalk.red('✕')} ${chalk.dim(dirName!)}`);
+        }
+        console.log(chalk.dim(`\n  Removed ${pruned.length} run(s), kept latest ${keep}`));
+      }
+      process.exit(0);
+    });
+
   return program;
 }
 
@@ -193,6 +312,7 @@ interface ScanOptions {
   output: string;
   filename?: string;
   concurrency: number;
+  keep: number;
   ci: boolean;
   sectionPath?: string | null;
 }
@@ -390,6 +510,14 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
     scanResults, skippedUrls, filteredUrls.length, opts, formats,
     filename, version, false, undefined, patterns, siteReportsDir
   );
+
+  // --- Auto-prune old report runs ---
+  if (opts.keep > 0) {
+    const pruned = await autoPrune(siteReportsDir, opts.keep);
+    if (pruned.length > 0 && !isCi) {
+      console.log(chalk.dim(`\n  Pruned ${pruned.length} old report run(s) (keeping latest ${opts.keep})`));
+    }
+  }
 
   // --- Terminal output ---
   const totalViolations = patterns.reduce((sum, p) => sum + p.affectedPageCount, 0);

@@ -188,6 +188,23 @@ a11yscan example.com --output csv,json,html,md
 # Produces a GitHub-flavored Markdown report alongside the defaults
 ```
 
+### Interactive wizard — just run `a11yscan`
+
+Run `a11yscan` with no arguments to launch the interactive scan builder. It walks you through:
+
+1. Site URL (required)
+2. Sitemap location (default: auto-discover at root)
+3. Directories to include (e.g., `/about`)
+4. Directories to exclude (e.g., `/about/publications`)
+5. Output formats (default: csv, json, html)
+6. Concurrency (default: 5)
+7. Report retention (default: keep latest 3)
+
+```bash
+a11yscan
+# Launches interactive wizard
+```
+
 ### CI/CD mode
 
 ```bash
@@ -205,11 +222,39 @@ a11yscan example.com --ci --output json
     a11yscan ${{ env.SITE_URL }} --ci --output json
 ```
 
+### Prune old reports
+
+By default, a11yscan keeps the latest 3 report runs per site/section and automatically removes older ones. Use `--keep` to change this:
+
+```bash
+# Keep latest 5 runs instead of 3
+a11yscan example.com --keep 5
+
+# Disable auto-pruning
+a11yscan example.com --keep 0
+```
+
+Manually prune with the `prune` subcommand:
+
+```bash
+# List all sites with report counts
+a11yscan prune
+
+# Prune a specific site (keep latest 3)
+a11yscan prune example.com
+
+# Prune a section
+a11yscan prune example.com --section /about
+
+# Prune all sites, keep latest 5
+a11yscan prune --all --keep 5
+```
+
 ## CLI Flags
 
 | Flag | Type | Default | Description |
 |---|---|---|---|
-| `[url]` | string | (none) | Site URL — auto-appends `/sitemap.xml` |
+| `[url]` | string | (none) | Site URL — includes path to auto-filter a section |
 | `--sitemap <url>` | string | (none) | Explicit URL to sitemap.xml |
 | `--filter <path>` | string | (all pages) | Path prefix to include (e.g., `/research`) |
 | `--filter-glob <pattern>` | string | (none) | Glob pattern for URL pathname matching |
@@ -219,6 +264,7 @@ a11yscan example.com --ci --output json
 | `--output <formats>` | string | `csv,json,html` | Comma-separated: csv, json, html, md |
 | `--filename <name>` | string | `aria-report-{timestamp}` | Base filename for reports |
 | `--concurrency <n>` | number | `5` | Parallel pages to scan (1-5) |
+| `--keep <n>` | number | `3` | Report runs to keep per site/section (0 = no pruning) |
 | `--ci` | boolean | `false` | CI mode: JSON to stdout, exit codes |
 
 ## Report Output
@@ -304,9 +350,11 @@ The core scanning engine. Everything needed to audit a site from the command lin
 - Trend tracking across multiple scan runs
 - Summary email digest for scheduled server scans
 
-### Phase 3 — Interactive Wizard
+### Phase 3 — Interactive Wizard (in progress)
 
-- Interactive wizard via inquirer (ESM-compatible)
+- ~~Interactive wizard via readline (no external dependencies)~~ ✓
+- ~~Report auto-pruning with `--keep` flag~~ ✓
+- ~~`prune` subcommand for manual report management~~ ✓
 - Saved scan profiles (re-run common scans with a single command)
 - Profile management: create, list, edit, delete
 - `a11yscan --profile production` shorthand

@@ -2,8 +2,8 @@
  * JSON report writer — structured report with metadata, patterns, and skipped URLs.
  */
 
-import { writeFile, mkdir } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { writeFile, mkdir, readdir, rm } from 'node:fs/promises';
+import { join, resolve, dirname } from 'node:path';
 import type { ViolationPattern } from '../analyzer/patterns.js';
 
 const REPORTS_DIR = resolve(process.cwd(), 'reports');
@@ -42,6 +42,83 @@ export async function prepareSiteReportsDir(sitemapUrl: string, sectionPath?: st
 
   await mkdir(dir, { recursive: true });
   return dir;
+}
+
+/**
+ * Prune old report runs in a directory, keeping the latest `keep` entries.
+ * Timestamp directories sort lexicographically (YYYY-MM-DD_HH-MM-SS).
+ * Returns the list of deleted directory paths.
+ */
+export async function pruneReports(parentDir: string, keep: number): Promise<string[]> {
+  if (keep <= 0) return [];
+
+  let entries: string[];
+  try {
+    entries = await readdir(parentDir);
+  } catch {
+    return [];
+  }
+
+  // Only consider directories matching the timestamp pattern
+  const timestampPattern = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
+  const timestampDirs = entries
+    .filter((e) => timestampPattern.test(e))
+    .sort()
+    .reverse(); // newest first
+
+  if (timestampDirs.length <= keep) return [];
+
+  const toDelete = timestampDirs.slice(keep);
+  const deleted: string[] = [];
+
+  for (const dir of toDelete) {
+    const fullPath = join(parentDir, dir);
+    await rm(fullPath, { recursive: true, force: true });
+    deleted.push(fullPath);
+  }
+
+  return deleted;
+}
+
+/**
+ * Auto-prune after a scan: prune the parent directory of siteReportsDir.
+ * The parent is the site or section directory containing timestamp folders.
+ */
+export async function autoPrune(siteReportsDir: string, keep: number): Promise<string[]> {
+  if (keep <= 0) return [];
+  const parentDir = dirname(siteReportsDir);
+  return pruneReports(parentDir, keep);
+}
+
+/**
+ * List all sites in the reports directory.
+ */
+export async function listSites(): Promise<string[]> {
+  try {
+    const entries = await readdir(REPORTS_DIR);
+    return entries.sort();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * List all timestamp runs for a site (and optional section).
+ */
+export async function listRuns(site: string, section?: string): Promise<string[]> {
+  const dir = section
+    ? resolve(REPORTS_DIR, site, section)
+    : resolve(REPORTS_DIR, site);
+
+  let entries: string[];
+  try {
+    entries = await readdir(dir);
+  } catch {
+    return [];
+  }
+
+  const timestampPattern = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/;
+  return entries.filter((e) => timestampPattern.test(e)).sort().reverse();
 }
 
 export interface SkippedUrl {

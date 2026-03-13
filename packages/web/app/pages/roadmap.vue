@@ -110,10 +110,12 @@ const phases = [
   },
   {
     name: 'Phase 3 — Interactive Wizard',
-    status: 'planned',
+    status: 'in-progress',
     description: 'Guided mode for users who don\'t want to memorize CLI flags.',
     items: [
-      'Interactive wizard via inquirer',
+      'Interactive wizard via readline (no external dependencies) ✓',
+      'Report auto-pruning with --keep flag ✓',
+      'Prune subcommand for manual report management ✓',
       'Saved scan profiles (re-run common scans with one command)',
       'Profile management: create, list, edit, delete',
       'a11yscan --profile production shorthand',

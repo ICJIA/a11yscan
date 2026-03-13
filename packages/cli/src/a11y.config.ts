@@ -20,7 +20,7 @@
  * Tool identity — shown in reports and terminal output.
  */
 export const TOOL_NAME = 'a11yscan';
-export const TOOL_VERSION = '1.2.0';
+export const TOOL_VERSION = '1.3.0';
 
 /**
  * Default output formats when --output is not specified.
@@ -45,6 +45,13 @@ export const REPORTS_DIR = 'reports';
  * Range: 1–5 (enforced by CLI flag validation).
  */
 export const DEFAULT_CONCURRENCY = 5;
+
+/**
+ * Default number of report runs to keep per site (or section).
+ * After each scan, older runs beyond this count are deleted.
+ * Set to 0 to disable automatic pruning.
+ */
+export const DEFAULT_KEEP_REPORTS = 3;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODERATE CHANGES — Understand the implications before editing.

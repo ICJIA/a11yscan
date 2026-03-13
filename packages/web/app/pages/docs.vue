@@ -212,6 +212,7 @@ const flags = [
   { name: '--output <formats>', default: 'csv,json,html', description: 'Comma-separated: csv, json, html, md' },
   { name: '--filename <name>', default: 'auto', description: 'Base filename for reports' },
   { name: '--concurrency <n>', default: '5', description: 'Parallel pages to scan (1-5)' },
+  { name: '--keep <n>', default: '3', description: 'Report runs to keep per site/section (0 = no pruning)' },
   { name: '--ci', default: 'false', description: 'CI mode: JSON to stdout, exit codes' },
 ];
 
@@ -224,6 +225,8 @@ const examples = [
   { title: 'Limit scan scope', code: 'a11yscan example.com --filter "/news" --limit 20' },
   { title: 'Custom report name', code: 'a11yscan example.com --filename "q1-audit"' },
   { title: 'Markdown for GitHub issues', code: 'a11yscan example.com --output csv,json,html,md' },
+  { title: 'Interactive wizard', code: 'a11yscan\n# Walks through site, sitemap, include/exclude, output, concurrency' },
+  { title: 'Prune old reports', code: 'a11yscan prune example.com --keep 3\n# Or prune all sites: a11yscan prune --all' },
   { title: 'CI/CD mode', code: 'a11yscan example.com --ci --output json' },
 ];
 </script>
