@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### CLI
 - **README** — added "Two ways to scan" section, open-source commitment language in project description
 
+### Fixed
+
+#### CLI
+- **Root cause hints now use config patterns** — the pattern analyzer was ignoring the 14 `ROOT_CAUSE_HINTS` defined in `a11y.config.ts` (WordPress, Shopify, Material UI, Elementor, Chakra UI, Ant Design, Bootstrap, Next.js, Gatsby, etc.) and only detecting Vuetify and Nuxt via hardcoded checks. Now uses all config patterns first, then falls back to structural heuristics.
+
 ## [1.5.0] — 2026-03-13
 
 ### Changed

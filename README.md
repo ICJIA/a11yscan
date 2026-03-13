@@ -346,7 +346,7 @@ The core scanning engine. Everything needed to audit a site from the command lin
 - Playwright scanner with AxeBuilder API, concurrency (p-limit, default 5)
 - Browser crash recovery with automatic relaunch
 - Pattern analysis: violations grouped by rule + normalized CSS selector
-- Root cause hints (Vuetify, Nuxt, WordPress, Material UI, etc.)
+- Root cause hints for 14 frameworks: Vuetify, Nuxt, WordPress, Elementor, WooCommerce, Shopify, Material UI, Next.js, Gatsby, Chakra UI, Ant Design, Bootstrap, DocSearch/Algolia, and CSS-in-JS (Emotion/Styled)
 - CSV, JSON, and HTML reporters with pattern grouping
 - LLM-ready JSON with `htmlSnippet`, `failureSummary`, `rawSelector`
 - Per-site timestamped report folders (preserved for diffing)
