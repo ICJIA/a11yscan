@@ -36,8 +36,11 @@ useSeoMeta({
   ogTitle: 'Features — a11yscan',
   ogDescription: 'Auto sitemap discovery, concurrent scanning, pattern grouping, root cause hints, and four report formats.',
   ogImage: 'https://a11yscan.dev/og-image.png',
+  ogImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
   ogUrl: 'https://a11yscan.dev/features',
   twitterCard: 'summary_large_image',
+  twitterImage: 'https://a11yscan.dev/og-image.png',
+  twitterImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
 });
 
 const sections = [

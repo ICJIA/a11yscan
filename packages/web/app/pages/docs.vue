@@ -194,8 +194,11 @@ useSeoMeta({
   ogTitle: 'Documentation — a11yscan',
   ogDescription: 'Install a11yscan, configure CLI flags, and run your first accessibility scan in minutes.',
   ogImage: 'https://a11yscan.dev/og-image.png',
+  ogImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
   ogUrl: 'https://a11yscan.dev/docs',
   twitterCard: 'summary_large_image',
+  twitterImage: 'https://a11yscan.dev/og-image.png',
+  twitterImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
 });
 
 const flags = [

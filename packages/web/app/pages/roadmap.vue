@@ -68,8 +68,11 @@ useSeoMeta({
   ogTitle: 'Roadmap — a11yscan',
   ogDescription: 'a11yscan development roadmap: CLI scanner, extended reporters, interactive wizard, and more.',
   ogImage: 'https://a11yscan.dev/og-image.png',
+  ogImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
   ogUrl: 'https://a11yscan.dev/roadmap',
   twitterCard: 'summary_large_image',
+  twitterImage: 'https://a11yscan.dev/og-image.png',
+  twitterImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
 });
 
 const phases = [

@@ -207,8 +207,11 @@ useSeoMeta({
   ogTitle: 'a11yscan — Pattern-aware accessibility auditor',
   ogDescription: 'Groups thousands of accessibility violations into actionable patterns. Fix 12 root causes, not 2,745 line items.',
   ogImage: 'https://a11yscan.dev/og-image.png',
+  ogImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
   ogUrl: 'https://a11yscan.dev/',
   twitterCard: 'summary_large_image',
+  twitterImage: 'https://a11yscan.dev/og-image.png',
+  twitterImageAlt: 'a11yscan — Pattern-aware accessibility auditor',
 });
 
 const features = [
