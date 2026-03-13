@@ -6,9 +6,9 @@
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-32 sm:pb-32">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <div class="inline-flex items-center gap-2 rounded-full border border-primary-500/20 bg-primary-500/5 px-4 py-1.5 text-xs font-medium text-primary-500 dark:text-primary-400 mb-6">
-              <span class="h-1.5 w-1.5 rounded-full bg-primary-500 dark:bg-primary-400" aria-hidden="true" />
-              Phase 1 complete &mdash; CLI scanner ready
+            <div class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/5 px-4 py-1.5 text-xs font-medium text-green-600 dark:text-green-400 mb-6">
+              <span class="h-1.5 w-1.5 rounded-full bg-green-500 dark:bg-green-400" aria-hidden="true" />
+              100% open source &middot; free forever &middot; MIT license
             </div>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 dark:text-white tracking-tight leading-[1.1]">
               Fix <span class="text-primary-500 dark:text-primary-400">12 patterns</span>,<br>
@@ -174,12 +174,38 @@
       </div>
     </section>
 
-    <!-- CTA -->
+    <!-- Open Source -->
     <section class="border-t border-neutral-200 dark:border-neutral-800/50">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div class="max-w-3xl mx-auto text-center">
+          <div class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/5 px-4 py-1.5 text-xs font-medium text-green-600 dark:text-green-400 mb-6">
+            MIT License
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">Free and open source. Forever.</h2>
+          <p class="mt-4 text-lg text-neutral-500 dark:text-neutral-400">
+            No pricing tiers. No accounts. No data leaves your machine.
+            Install a11yscan on your own server, run it behind your firewall, audit as many sites as you want.
+            The full source code is on GitHub under the MIT license and always will be.
+          </p>
+        </div>
+        <div class="mt-12 grid sm:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div v-for="item in openSourceItems" :key="item.title" class="text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 mb-3">
+              <UIcon :name="item.icon" class="text-xl" aria-hidden="true" />
+            </div>
+            <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-1">{{ item.title }}</h3>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ item.description }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="border-t border-neutral-200 dark:border-neutral-800/50 bg-neutral-50 dark:bg-neutral-950">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
         <h2 class="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">Ready to audit your site?</h2>
         <p class="mt-4 text-lg text-neutral-500 dark:text-neutral-400 max-w-lg mx-auto">
-          Install a11yscan, point it at your sitemap, and get a pattern-grouped report in minutes.
+          Install a11yscan, point it at your sitemap, and get a pattern-grouped report in minutes. No sign-up required.
         </p>
         <div class="mt-8 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 inline-block px-8 py-4">
           <code class="font-mono text-sm text-neutral-700 dark:text-neutral-300">
@@ -238,6 +264,13 @@ const llmFields = [
   { name: 'rawSelector', description: '— full CSS path to the element' },
   { name: 'suggestedFix', description: '— link to Deque University fix guide' },
   { name: 'rootCauseHint', description: '— which framework component is responsible' },
+];
+
+const openSourceItems = [
+  { icon: 'i-lucide-dollar-sign', title: 'No pricing tiers', description: 'One version with every feature. No freemium, no enterprise upsell.' },
+  { icon: 'i-lucide-user-x', title: 'No accounts', description: 'No sign-up, no login, no tracking. Install and run.' },
+  { icon: 'i-lucide-server', title: 'Self-hosted', description: 'Runs on your machine or server. Your data never leaves your infrastructure.' },
+  { icon: 'i-lucide-git-branch', title: 'MIT license', description: 'Fork it, modify it, ship it. No restrictions, no vendor lock-in.' },
 ];
 
 const useCases = [
