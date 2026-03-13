@@ -1,0 +1,14 @@
+{
+  "name": "a11yscan-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter cli build",
+    "build:cli": "pnpm --filter cli build",
+    "dev:cli": "pnpm --filter cli dev",
+    "test": "pnpm --filter cli test",
+    "lint": "pnpm --filter cli lint"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
+  }
+}

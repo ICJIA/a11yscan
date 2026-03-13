@@ -23,7 +23,7 @@ TECH STACK (non-negotiable, all versions pinned):
 - CLI framework: commander@12.x
 - Wizard/prompts: inquirer@9.x (ESM-compatible)
 - Headless browser: Playwright (default), Puppeteer (optional)
-- Accessibility engine: axe-core via @axe-core/playwright
+- Accessibility engine: @axe-core/playwright (uses AxeBuilder API — do NOT manually inject axe-core via addScriptTag)
 - Sitemap parsing: sitemapper@3.x
 - Progress: ora@8.x + cli-progress@3.x
 - Colors: chalk@5.x (ESM-compatible)
@@ -46,43 +46,40 @@ NUXT UI CSS INTEGRATION (critical — do not deviate):
 - Custom theme tokens go in main.css using @theme { } directive
 - Runtime color config goes in app.config.ts under ui.colors
 
-REPOSITORY STRUCTURE:
+REPOSITORY STRUCTURE (full final structure — each phase only builds its own files):
 a11yscan/
 ├── packages/
-│   ├── cli/
+│   ├── cli/                        # Phases 1–4
 │   │   ├── src/
 │   │   │   ├── index.ts
 │   │   │   ├── cli/
-│   │   │   │   ├── direct.ts
-│   │   │   │   ├── wizard.ts
-│   │   │   │   └── profiles.ts
+│   │   │   │   ├── direct.ts       # Phase 1
+│   │   │   │   ├── wizard.ts       # Phase 3 (do NOT create in Phase 1)
+│   │   │   │   └── profiles.ts     # Phase 3 (do NOT create in Phase 1)
 │   │   │   ├── sitemap/
 │   │   │   │   ├── fetcher.ts
 │   │   │   │   └── filter.ts
 │   │   │   ├── scanner/
 │   │   │   │   ├── playwright.ts
-│   │   │   │   ├── puppeteer.ts
+│   │   │   │   ├── puppeteer.ts    # Phase 4 (do NOT create in Phase 1)
 │   │   │   │   └── axe.ts
 │   │   │   ├── analyzer/
 │   │   │   │   └── patterns.ts
 │   │   │   └── reporter/
 │   │   │       ├── csv.ts
 │   │   │       ├── json.ts
-│   │   │       ├── html.ts
-│   │   │       ├── markdown.ts
+│   │   │       ├── html.ts         # Phase 2 (do NOT create in Phase 1)
+│   │   │       ├── markdown.ts     # Phase 2 (do NOT create in Phase 1)
 │   │   │       └── templates/
-│   │   │           └── report.hbs
+│   │   │           └── report.hbs  # Phase 2 (do NOT create in Phase 1)
 │   │   ├── package.json
 │   │   └── tsconfig.json
-│   └── web/
+│   └── web/                        # Phase 5 (do NOT create in Phase 1)
 │       ├── app/
-│       │   ├── assets/
-│       │   │   └── css/
-│       │   │       └── main.css    # Tailwind + Nuxt UI CSS entry point
+│       │   ├── assets/css/main.css
 │       │   ├── app.vue
-│       │   ├── app.config.ts       # Nuxt UI runtime theme config
-│       │   └── pages/
-│       │       └── index.vue
+│       │   ├── app.config.ts
+│       │   └── pages/index.vue
 │       ├── nuxt.config.ts
 │       └── package.json
 ├── docs/
@@ -92,6 +89,11 @@ a11yscan/
 ├── .npmrc                          # pnpm config
 ├── .gitignore
 └── README.md
+
+ESM CONFIGURATION (critical for chalk@5, p-limit@6, ora@8):
+- packages/cli/package.json MUST include: "type": "module"
+- tsconfig.json: "module": "NodeNext", "moduleResolution": "NodeNext"
+- All local imports MUST use .js extension: import { foo } from './bar.js'
 
 SECURITY RULES (enforce in all generated code):
 1. Never allow file paths in --filename that contain / \ .. or special chars
@@ -111,7 +113,7 @@ SPA RENDER STRATEGY (both engines):
 2. Wait for networkidle (no network activity for 500ms)
 3. If --wait-for-selector provided: additionally wait for that selector
 4. 500ms fixed delay after networkidle as safety buffer
-5. Then inject and run axe-core
+5. Then run axe-core via @axe-core/playwright AxeBuilder API
 
 PATTERN GROUPING KEY: `${violationId}::${normalizeSelector(cssSelector)}`
 Selector normalization: strip :nth-child(), strip inline style attrs, lowercase.
@@ -145,19 +147,22 @@ WHAT TO BUILD (in this order):
        packages/web/.nuxt/, reports/, profiles/, .env, .env.*,
        !.env.example, .DS_Store, *.log, pnpm-debug.log*,
        packages/cli/test-results/, packages/cli/playwright-report/
-   - packages/cli/package.json with all Phase 1 dependencies (exact versions):
+   - packages/cli/package.json MUST include "type": "module" (required for ESM imports)
+   - packages/cli/package.json dependencies (exact versions, no ^ or ~):
      - commander@12.1.0
      - sitemapper@3.1.4
-     - @playwright/test@1.50.0
+     - playwright@1.50.0
      - @axe-core/playwright@4.10.0
-     - axe-core@4.10.0
      - chalk@5.3.0
      - csv-writer@1.6.0
      - p-limit@6.0.0
      - picomatch@4.0.2
-   - packages/cli/package.json devDependencies:
+   - packages/cli/package.json devDependencies (exact versions):
+     - typescript@5.7.3
      - vitest@3.0.0
-   - packages/cli/tsconfig.json (strict mode, ESNext, NodeNext module resolution)
+     - @types/picomatch@4.0.2
+   - packages/cli/tsconfig.json: strict mode, "target": "ESNext", "module": "NodeNext", "moduleResolution": "NodeNext"
+   - All local imports must use .js extension (e.g., import { foo } from './bar.js')
 
 2. ENTRY POINT (src/index.ts)
    - Import commander setup from cli/direct.ts
@@ -208,26 +213,50 @@ WHAT TO BUILD (in this order):
    - Log: "Found X URLs → filtered to Y matching {filter}"
 
 6. AXE CONFIG (src/scanner/axe.ts)
-   Export AXE_RULES object and buildAxeConfig() function.
-   buildAxeConfig() returns the axe RunOptions that enables ONLY the 
-   13 rules listed in static context. All other rules disabled via 
-   runOnly: { type: 'rule', values: [...enabledRuleIds] }
+   Export AXE_RULES object (list of enabled rule IDs) and buildAxeConfig() function.
+   buildAxeConfig() returns an options object compatible with AxeBuilder.options():
+   { runOnly: { type: 'rule', values: [...enabledRuleIds] } }
+   This enables ONLY the 13 rules listed in static context. All other rules disabled.
 
 7. PLAYWRIGHT SCANNER (src/scanner/playwright.ts)
-   async function scanPage(url: string, axeConfig: RunOptions): Promise<AxeResults>
-   
-   - Launch chromium headless
-   - New page, navigate to url
-   - Wait for networkidle
-   - 500ms delay
-   - addScriptTag with axe-core
-   - page.evaluate() to run axe with config
-   - Return AxeResults
-   - Timeout: 30000ms default
-   - On timeout or navigation error: return null (caller handles skip)
-   - Close browser after all pages (not after each page — reuse browser instance)
-   - Concurrency: use p-limit with --concurrency value (default 3, max 5)
-   - On browser crash: attempt to relaunch once, then write partial report and exit code 3
+   Export a ScannerManager class (not bare functions) to manage browser lifecycle:
+
+   class ScannerManager {
+     private browser: Browser | null = null;
+
+     async launch(): Promise<void>
+       - Launch chromium headless via playwright.chromium.launch()
+       - Store browser instance for reuse across all pages
+
+     async scanPage(url: string, axeConfig: object): Promise<AxeResults | null>
+       - Create new page from this.browser (reuse browser, new page per URL)
+       - Navigate to url with { waitUntil: 'networkidle' }
+       - 500ms delay after networkidle as safety buffer
+       - Run axe using @axe-core/playwright AxeBuilder API:
+           import AxeBuilder from '@axe-core/playwright';
+           const results = await new AxeBuilder({ page })
+             .options(axeConfig)
+             .analyze();
+       - Do NOT use addScriptTag or page.evaluate for axe — use AxeBuilder
+       - Close the page (not the browser) after scan
+       - Return AxeResults on success, null on failure
+       - Timeout: 30000ms default per page
+       - On timeout or navigation error: return null (caller logs to skippedUrls)
+
+     async close(): Promise<void>
+       - Close browser instance
+
+     async relaunch(): Promise<boolean>
+       - Attempt to close crashed browser and launch a new one
+       - Return true if successful, false if relaunch also fails
+   }
+
+   In the caller (index.ts / direct.ts):
+   - Create one ScannerManager instance
+   - Call manager.launch() once
+   - Use p-limit(concurrency) to run manager.scanPage() calls in parallel
+   - On browser crash: call manager.relaunch(); if fails, write partial report, exit 3
+   - Call manager.close() when all pages are done
 
 8. PATTERN ANALYZER (src/analyzer/patterns.ts)
    Input: Map<url: string, axeResults: AxeResults>
@@ -294,10 +323,10 @@ WHAT TO BUILD (in this order):
     CI mode (--ci): suppress all above. Only emit JSON summary to stdout on completion.
 
     EXIT CODES:
-    0 = no violations (or below --threshold)
-    1 = violations found above threshold
-    2 = configuration/fetch error (bad sitemap, invalid flags)
-    3 = scan interrupted (browser crash, partial results written)
+    0 = scan complete, no violations found
+    1 = scan complete, violations found
+    2 = configuration or fetch error (bad sitemap URL, invalid flags, unreachable sitemap)
+    3 = scan interrupted (browser crash after relaunch failure, partial results written)
 
 12. ERROR RECOVERY
     - Sitemap fetch: retry once after 5s on failure, then exit code 2
