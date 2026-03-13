@@ -8,6 +8,7 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import type { JsonReport } from './json.js';
 import type { ViolationPattern } from '../analyzer/patterns.js';
+import { AXE_RULES } from '../scanner/axe.js';
 
 const REPORTS_DIR = resolve(process.cwd(), 'reports');
 
@@ -108,6 +109,192 @@ function buildGroupSection(
   </div>`;
 }
 
+/** Rule categories for the reference section at the bottom of the report. */
+const RULE_CATEGORIES: { name: string; rules: { id: string; desc: string }[] }[] = [
+  {
+    name: 'ARIA Roles & Attributes',
+    rules: [
+      { id: 'aria-allowed-attr', desc: 'ARIA attributes must be allowed for the role' },
+      { id: 'aria-allowed-role', desc: 'ARIA role must be appropriate for the element' },
+      { id: 'aria-braille-equivalent', desc: 'ARIA braille attributes must have non-braille equivalent' },
+      { id: 'aria-command-name', desc: 'ARIA command roles must have an accessible name' },
+      { id: 'aria-conditional-attr', desc: 'ARIA attributes used conditionally must be valid' },
+      { id: 'aria-deprecated-role', desc: 'Deprecated ARIA roles must not be used' },
+      { id: 'aria-dialog-name', desc: 'Dialog elements must have an accessible name' },
+      { id: 'aria-hidden-body', desc: 'aria-hidden must not be present on the document body' },
+      { id: 'aria-hidden-focus', desc: 'aria-hidden elements must not be focusable' },
+      { id: 'aria-input-field-name', desc: 'ARIA input fields must have an accessible name' },
+      { id: 'aria-meter-name', desc: 'ARIA meter elements must have an accessible name' },
+      { id: 'aria-progressbar-name', desc: 'ARIA progressbar must have an accessible name' },
+      { id: 'aria-prohibited-attr', desc: 'ARIA attributes must not be prohibited for the role' },
+      { id: 'aria-required-attr', desc: 'Required ARIA attributes must be provided' },
+      { id: 'aria-required-children', desc: 'ARIA roles must contain their required children' },
+      { id: 'aria-required-parent', desc: 'ARIA roles must be contained by required parent' },
+      { id: 'aria-roledescription', desc: 'aria-roledescription must be on semantic role elements' },
+      { id: 'aria-roles', desc: 'ARIA role attribute must have a valid value' },
+      { id: 'aria-text', desc: 'role=text must not contain focusable content' },
+      { id: 'aria-toggle-field-name', desc: 'ARIA toggle fields must have an accessible name' },
+      { id: 'aria-tooltip-name', desc: 'ARIA tooltip elements must have an accessible name' },
+      { id: 'aria-treeitem-name', desc: 'ARIA treeitem must have an accessible name' },
+      { id: 'aria-valid-attr', desc: 'ARIA attributes must be valid and not misspelled' },
+      { id: 'aria-valid-attr-value', desc: 'ARIA attribute values must be valid' },
+    ],
+  },
+  {
+    name: 'Accessible Names & Labels',
+    rules: [
+      { id: 'area-alt', desc: 'Image map area elements must have alt text' },
+      { id: 'button-name', desc: 'Buttons must have discernible text' },
+      { id: 'empty-heading', desc: 'Headings must not be empty' },
+      { id: 'empty-table-header', desc: 'Table headers must not be empty' },
+      { id: 'frame-title', desc: 'Frames must have an accessible name' },
+      { id: 'frame-title-unique', desc: 'Frame titles must be unique' },
+      { id: 'image-alt', desc: 'Images must have alt text' },
+      { id: 'image-redundant-alt', desc: 'Alt text must not duplicate surrounding text' },
+      { id: 'input-button-name', desc: 'Input buttons must have discernible text' },
+      { id: 'input-image-alt', desc: 'Image inputs must have alt text' },
+      { id: 'label', desc: 'Form elements must have labels' },
+      { id: 'label-content-name-mismatch', desc: 'Label text must match the accessible name' },
+      { id: 'label-title-only', desc: 'Form fields should not use title as only label' },
+      { id: 'link-name', desc: 'Links must have discernible text' },
+      { id: 'object-alt', desc: 'Object elements must have alt text' },
+      { id: 'role-img-alt', desc: 'role=img elements must have alt text' },
+      { id: 'select-name', desc: 'Select elements must have an accessible name' },
+      { id: 'summary-name', desc: 'Summary elements must have discernible text' },
+      { id: 'svg-img-alt', desc: 'SVG images must have an accessible name' },
+    ],
+  },
+  {
+    name: 'Color Contrast',
+    rules: [
+      { id: 'color-contrast', desc: 'Text must meet WCAG AA contrast ratios (4.5:1 normal, 3:1 large)' },
+      { id: 'link-in-text-block', desc: 'Links in text blocks must be visually distinguishable' },
+    ],
+  },
+  {
+    name: 'Document Structure',
+    rules: [
+      { id: 'bypass', desc: 'Page must have a way to bypass repeated content' },
+      { id: 'document-title', desc: 'Document must have a title element' },
+      { id: 'duplicate-id-aria', desc: 'IDs used in ARIA must be unique' },
+      { id: 'heading-order', desc: 'Heading levels should only increase by one' },
+      { id: 'html-has-lang', desc: 'HTML element must have a lang attribute' },
+      { id: 'html-lang-valid', desc: 'lang attribute must have a valid value' },
+      { id: 'html-xml-lang-mismatch', desc: 'xml:lang and lang must match' },
+      { id: 'p-as-heading', desc: 'Styled paragraphs must not be used as headings' },
+      { id: 'page-has-heading-one', desc: 'Page should contain a level-one heading' },
+      { id: 'valid-lang', desc: 'lang attributes must use valid BCP 47 values' },
+    ],
+  },
+  {
+    name: 'Landmarks & Regions',
+    rules: [
+      { id: 'landmark-banner-is-top-level', desc: 'Banner landmark must be top level' },
+      { id: 'landmark-complementary-is-top-level', desc: 'Complementary landmark must be top level' },
+      { id: 'landmark-contentinfo-is-top-level', desc: 'Contentinfo landmark must be top level' },
+      { id: 'landmark-main-is-top-level', desc: 'Main landmark must be top level' },
+      { id: 'landmark-no-duplicate-banner', desc: 'Page must not have more than one banner' },
+      { id: 'landmark-no-duplicate-contentinfo', desc: 'Page must not have more than one contentinfo' },
+      { id: 'landmark-no-duplicate-main', desc: 'Page must not have more than one main landmark' },
+      { id: 'landmark-one-main', desc: 'Page must have exactly one main landmark' },
+      { id: 'landmark-unique', desc: 'Landmarks must have unique accessible names' },
+      { id: 'region', desc: 'All page content must be within landmark regions' },
+      { id: 'skip-link', desc: 'Page should have a valid skip link' },
+    ],
+  },
+  {
+    name: 'Lists',
+    rules: [
+      { id: 'definition-list', desc: 'dl elements must be properly structured' },
+      { id: 'dlitem', desc: 'dt/dd must be within a dl' },
+      { id: 'list', desc: 'li must be within ul or ol' },
+      { id: 'listitem', desc: 'List items must be in a list container' },
+    ],
+  },
+  {
+    name: 'Tables',
+    rules: [
+      { id: 'scope-attr-valid', desc: 'Scope attribute must have a valid value' },
+      { id: 'table-duplicate-name', desc: 'Tables should not have duplicate accessible names' },
+      { id: 'table-fake-caption', desc: 'Tables must use proper caption element' },
+      { id: 'td-has-header', desc: 'Data cells in tables must have headers' },
+      { id: 'td-headers-attr', desc: 'headers attribute must refer to valid cells' },
+      { id: 'th-has-data-cells', desc: 'Table headers must have associated data cells' },
+    ],
+  },
+  {
+    name: 'Forms & Inputs',
+    rules: [
+      { id: 'accesskeys', desc: 'accesskey values should be unique' },
+      { id: 'autocomplete-valid', desc: 'autocomplete attribute must be correct' },
+      { id: 'form-field-multiple-labels', desc: 'Form fields must not have multiple labels' },
+      { id: 'tabindex', desc: 'tabindex should not be greater than 0' },
+    ],
+  },
+  {
+    name: 'Interactive Elements',
+    rules: [
+      { id: 'frame-focusable-content', desc: 'Frames with focusable content must have tabindex' },
+      { id: 'nested-interactive', desc: 'Interactive elements must not be nested' },
+      { id: 'presentation-role-conflict', desc: 'Presentation role must not conflict with native semantics' },
+      { id: 'scrollable-region-focusable', desc: 'Scrollable regions must be keyboard accessible' },
+    ],
+  },
+  {
+    name: 'Media',
+    rules: [
+      { id: 'audio-caption', desc: 'Audio elements must have captions' },
+      { id: 'no-autoplay-audio', desc: 'Audio must not autoplay for more than 3 seconds' },
+      { id: 'video-caption', desc: 'Video elements must have captions' },
+    ],
+  },
+  {
+    name: 'Visual & Layout',
+    rules: [
+      { id: 'avoid-inline-spacing', desc: 'Inline text spacing must be adjustable' },
+      { id: 'blink', desc: 'Blink elements must not be used' },
+      { id: 'css-orientation-lock', desc: 'CSS must not lock display orientation' },
+      { id: 'marquee', desc: 'Marquee elements must not be used' },
+      { id: 'meta-refresh', desc: 'Timed meta refresh must not be used' },
+      { id: 'meta-viewport', desc: 'Viewport must not disable user zoom' },
+      { id: 'meta-viewport-large', desc: 'Viewport must allow sufficient magnification' },
+      { id: 'server-side-image-map', desc: 'Server-side image maps must not be used' },
+      { id: 'target-size', desc: 'Touch targets must be at least 24×24 CSS pixels' },
+    ],
+  },
+];
+
+function buildRuleReference(): string {
+  const totalRules = RULE_CATEGORIES.reduce((sum, cat) => sum + cat.rules.length, 0);
+
+  const categoryRows = RULE_CATEGORIES.map((cat) => {
+    const ruleRows = cat.rules
+      .map(
+        (r) =>
+          `<tr><td style="font-family:monospace;font-size:12px;white-space:nowrap;padding:4px 12px;"><a href="https://dequeuniversity.com/rules/axe/4.x/${r.id}" target="_blank" rel="noopener">${escapeHtml(r.id)}</a></td><td style="font-size:12px;padding:4px 12px;color:#555;">${escapeHtml(r.desc)}</td></tr>`
+      )
+      .join('\n            ');
+
+    return `
+        <tr><td colspan="2" style="padding:12px 12px 4px;font-weight:700;font-size:13px;background:#f8f8f8;border-top:1px solid #e0e0e0;">${escapeHtml(cat.name)} <span style="font-weight:400;color:#999;">(${cat.rules.length})</span></td></tr>
+            ${ruleRows}`;
+  }).join('\n');
+
+  return `
+  <div style="margin-top:48px;border-top:2px solid #e0e0e0;padding-top:24px;">
+    <h2 style="font-size:16px;margin:0 0 8px;">axe-core Rule Reference (${totalRules} rules)</h2>
+    <p style="font-size:13px;color:#555;margin:0 0 16px;">
+      This scan checks <strong>${totalRules} rules</strong> — the most thorough assessment possible with open-source
+      <a href="https://github.com/dequelabs/axe-core" target="_blank" rel="noopener">axe-core</a>.
+      Covers all WCAG 2.1 AA requirements plus best-practice rules for landmarks, headings, and semantics.
+      Rules marked with <em>best-practice</em> go beyond WCAG but reflect widely accepted accessibility standards.
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      ${categoryRows}
+    </table>
+  </div>`;
+}
+
 function buildHtml(report: JsonReport): string {
   const { meta, patterns, skippedUrls } = report;
   const criticalCount = patterns.filter((p) => p.impact === 'critical').length;
@@ -186,6 +373,8 @@ function buildHtml(report: JsonReport): string {
   ${patterns.length > 0 ? groupSections : '<p style="color:#558b2f;font-weight:600;">No accessibility violations found.</p>'}
 
   ${skippedSection}
+
+  ${buildRuleReference()}
 
   <div class="footer">
     Generated by ${escapeHtml(meta.tool)} v${escapeHtml(meta.version)} on ${escapeHtml(meta.generatedAt)}
