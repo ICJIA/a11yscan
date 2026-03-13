@@ -101,7 +101,7 @@ export function createProgram(): Command {
     .option('--limit <n>', 'Max number of pages to scan', parseInt)
     .option('--output <formats>', 'Comma-separated output formats: csv, json, html', 'csv,json,html')
     .option('--filename <name>', 'Base filename for reports')
-    .option('--concurrency <n>', 'Parallel pages to scan (1-5)', parseInt, 4)
+    .option('--concurrency <n>', 'Parallel pages to scan (1-5)', parseInt, 5)
     .option('--ci', 'CI mode: minimal output, exit 1 on violations', false)
     .action(async (url, opts) => {
       // Resolve sitemap URL from positional arg or --sitemap flag

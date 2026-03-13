@@ -211,7 +211,7 @@ const flags = [
   { name: '--limit <n>', default: '—', description: 'Max number of pages to scan' },
   { name: '--output <formats>', default: 'csv,json,html', description: 'Comma-separated: csv, json, html, md' },
   { name: '--filename <name>', default: 'auto', description: 'Base filename for reports' },
-  { name: '--concurrency <n>', default: '4', description: 'Parallel pages to scan (1-5)' },
+  { name: '--concurrency <n>', default: '5', description: 'Parallel pages to scan (1-5)' },
   { name: '--ci', default: 'false', description: 'CI mode: JSON to stdout, exit codes' },
 ];
 

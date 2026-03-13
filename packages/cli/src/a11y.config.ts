@@ -44,7 +44,7 @@ export const REPORTS_DIR = 'reports';
  * Higher values = faster scans, but more memory and CPU.
  * Range: 1–5 (enforced by CLI flag validation).
  */
-export const DEFAULT_CONCURRENCY = 4;
+export const DEFAULT_CONCURRENCY = 5;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODERATE CHANGES — Understand the implications before editing.

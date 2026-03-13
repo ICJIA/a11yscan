@@ -48,7 +48,7 @@ const sections = [
     title: 'Scanning',
     items: [
       { icon: 'i-lucide-globe', title: 'Auto Sitemap Discovery', description: 'Just give it a URL like "example.com". a11yscan auto-prepends https:// and checks for /sitemap.xml. No flags needed.' },
-      { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel using Playwright with p-limit concurrency control. Default: 4 parallel pages.' },
+      { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel using Playwright with p-limit concurrency control. Default: 5 parallel pages.' },
       { icon: 'i-lucide-refresh-cw', title: 'Crash Recovery', description: 'If Chromium crashes mid-scan, the browser automatically relaunches and scanning continues. No lost progress.' },
       { icon: 'i-lucide-shield-check', title: 'SSRF Protection', description: 'Blocks localhost, private IPs (10.x, 172.16-31.x, 192.168.x), link-local, and non-HTTP protocols.' },
     ],

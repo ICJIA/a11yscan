@@ -206,7 +206,7 @@ a11yscan example.com --ci --output json
 | `--limit <n>` | number | unlimited | Max number of pages to scan |
 | `--output <formats>` | string | `csv,json,html` | Comma-separated: csv, json, html, md |
 | `--filename <name>` | string | `aria-report-{timestamp}` | Base filename for reports |
-| `--concurrency <n>` | number | `4` | Parallel pages to scan (1-5) |
+| `--concurrency <n>` | number | `5` | Parallel pages to scan (1-5) |
 | `--ci` | boolean | `false` | CI mode: JSON to stdout, exit codes |
 
 ## Report Output

@@ -38,7 +38,7 @@
                 <div><span class="text-neutral-400 dark:text-neutral-400">$</span> <span class="text-neutral-900 dark:text-white">a11yscan example.com</span></div>
                 <div class="mt-3 text-neutral-500 dark:text-neutral-400">Checking for sitemap at https://example.com/sitemap.xml... <span class="text-green-600 dark:text-green-400">found</span></div>
                 <div class="text-neutral-500 dark:text-neutral-400">Fetching sitemap... <span class="text-green-600 dark:text-green-400">1,860 URLs found</span></div>
-                <div class="text-neutral-500 dark:text-neutral-400">Scanning 1,860 pages (concurrency: 4)...</div>
+                <div class="text-neutral-500 dark:text-neutral-400">Scanning 1,860 pages (concurrency: 5)...</div>
                 <div class="mt-3 font-semibold text-neutral-900 dark:text-white">Scan complete.</div>
                 <div class="mt-2 text-neutral-500 dark:text-neutral-400">  Pages scanned:   <span class="text-green-600 dark:text-green-400 font-semibold">1,860</span></div>
                 <div class="text-neutral-500 dark:text-neutral-400">  Total violations: <span class="text-yellow-600 dark:text-yellow-400 font-semibold">4,200</span></div>
