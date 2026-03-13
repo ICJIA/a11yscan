@@ -3,6 +3,7 @@
  */
 
 import type { AxeResults, Result, NodeResult } from 'axe-core';
+import { ROOT_CAUSE_HINTS } from '../a11y.config.js';
 
 export interface ViolationPattern {
   patternId: string;
@@ -45,25 +46,27 @@ export function normalizeSelector(selector: string): string {
 
 /**
  * Determine root cause hint based on CSS selector patterns.
- * Uses pattern matching, not naive substring search, to avoid false positives.
+ * Uses ROOT_CAUSE_HINTS from a11y.config.ts first, then falls back to
+ * structural heuristics (shared layout, global component).
  */
 function getRootCauseHint(
   normalizedSelector: string,
   affectedPageCount: number,
   totalPages: number
 ): string {
-  // Vuetify component: class starts with .v- (e.g., .v-btn, .v-autocomplete__content)
-  if (/\.v-[a-z]/.test(normalizedSelector)) {
-    return 'Likely Vuetify component';
+  // Check config-defined patterns (Vuetify, WordPress, Material UI, Shopify, etc.)
+  for (const { pattern, hint } of ROOT_CAUSE_HINTS) {
+    if (pattern.test(normalizedSelector)) {
+      return hint;
+    }
   }
 
-  // Nuxt layout element: .__nuxt, .nuxt-, #__nuxt
+  // Nuxt layout element: .__nuxt, .nuxt-, #__nuxt (broader match than config)
   if (/[.#]_?_?nuxt[-_]?/.test(normalizedSelector)) {
     return 'Likely Nuxt layout element';
   }
 
   // Shared layout component: <nav>, <header>, <footer> elements or ARIA landmark roles
-  // Match element names at word boundaries to avoid matching "navigator", "overview", etc.
   if (
     /(?:^|[\s>+~])(?:nav|header|footer)(?:$|[\s>+~.#[:])/.test(normalizedSelector) ||
     /\[role=["']?(?:navigation|banner|contentinfo)["']?]/.test(normalizedSelector)
