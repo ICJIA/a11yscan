@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm --filter a11yscan-web generate"
+  command = "pnpm install --frozen-lockfile && pnpm --filter a11yscan-web generate"
   publish = "packages/web/.output/public"
 
 [build.environment]
