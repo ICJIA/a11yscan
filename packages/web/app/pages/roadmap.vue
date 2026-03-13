@@ -1,50 +1,50 @@
 <template>
   <div>
     <section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28">
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">Roadmap</h1>
-      <p class="mt-4 text-lg text-neutral-400 max-w-2xl">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Roadmap</h1>
+      <p class="mt-4 text-lg text-neutral-500 dark:text-neutral-400 max-w-2xl">
         a11yscan is built in phases. Each phase ships independently and is fully usable on its own.
       </p>
 
       <div class="mt-16 space-y-0">
         <div v-for="(phase, i) in phases" :key="phase.name" class="relative pl-10">
           <!-- Timeline line -->
-          <div v-if="i < phases.length - 1" class="absolute left-[15px] top-10 bottom-0 w-px" :class="phase.status === 'complete' ? 'bg-primary-500/40' : 'bg-neutral-800'" />
+          <div v-if="i < phases.length - 1" class="absolute left-[15px] top-10 bottom-0 w-px" :class="phase.status === 'complete' ? 'bg-primary-500/40' : 'bg-neutral-300 dark:bg-neutral-800'" />
 
           <!-- Timeline dot -->
           <div class="absolute left-0 top-1 flex items-center justify-center w-8 h-8 rounded-full border-2"
             :class="{
               'border-primary-500 bg-primary-500/20': phase.status === 'complete',
-              'border-neutral-600 bg-neutral-800': phase.status === 'planned',
+              'border-neutral-400 dark:border-neutral-600 bg-neutral-200 dark:bg-neutral-800': phase.status === 'planned',
             }"
           >
-            <UIcon v-if="phase.status === 'complete'" name="i-lucide-check" class="text-primary-400 text-sm" />
-            <span v-else class="h-2 w-2 rounded-full bg-neutral-600" />
+            <UIcon v-if="phase.status === 'complete'" name="i-lucide-check" class="text-primary-500 dark:text-primary-400 text-sm" />
+            <span v-else class="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-600" />
           </div>
 
           <!-- Content -->
           <div class="pb-12">
             <div class="flex items-center gap-3 mb-2">
-              <h2 class="text-xl font-bold text-white">{{ phase.name }}</h2>
+              <h2 class="text-xl font-bold text-neutral-900 dark:text-white">{{ phase.name }}</h2>
               <span
                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                 :class="{
-                  'bg-primary-500/10 text-primary-400 border border-primary-500/20': phase.status === 'complete',
-                  'bg-neutral-800 text-neutral-500 border border-neutral-700': phase.status === 'planned',
+                  'bg-primary-500/10 text-primary-500 dark:text-primary-400 border border-primary-500/20': phase.status === 'complete',
+                  'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 border border-neutral-300 dark:border-neutral-700': phase.status === 'planned',
                 }"
               >
                 {{ phase.status === 'complete' ? 'Complete' : 'Planned' }}
               </span>
             </div>
-            <p class="text-neutral-400 mb-4">{{ phase.description }}</p>
+            <p class="text-neutral-500 dark:text-neutral-400 mb-4">{{ phase.description }}</p>
             <ul class="space-y-2">
               <li v-for="item in phase.items" :key="item" class="flex items-start gap-2 text-sm">
                 <UIcon
                   :name="phase.status === 'complete' ? 'i-lucide-check-circle' : 'i-lucide-circle'"
                   class="mt-0.5 shrink-0"
-                  :class="phase.status === 'complete' ? 'text-primary-400' : 'text-neutral-700'"
+                  :class="phase.status === 'complete' ? 'text-primary-500 dark:text-primary-400' : 'text-neutral-400 dark:text-neutral-700'"
                 />
-                <span :class="phase.status === 'complete' ? 'text-neutral-300' : 'text-neutral-500'">{{ item }}</span>
+                <span :class="phase.status === 'complete' ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500'">{{ item }}</span>
               </li>
             </ul>
           </div>

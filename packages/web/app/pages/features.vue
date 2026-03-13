@@ -2,22 +2,22 @@
   <div>
     <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28">
       <div class="max-w-3xl">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">Features</h1>
-        <p class="mt-4 text-lg text-neutral-400">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Features</h1>
+        <p class="mt-4 text-lg text-neutral-500 dark:text-neutral-400">
           Everything a11yscan does in Phase 1, and what's coming next.
         </p>
       </div>
 
       <div class="mt-16 space-y-16">
         <div v-for="section in sections" :key="section.title">
-          <h2 class="text-2xl font-bold text-white mb-6">{{ section.title }}</h2>
+          <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6">{{ section.title }}</h2>
           <div class="grid sm:grid-cols-2 gap-6">
-            <div v-for="item in section.items" :key="item.title" class="rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
+            <div v-for="item in section.items" :key="item.title" class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 p-6">
               <div class="flex items-center gap-3 mb-3">
-                <UIcon :name="item.icon" class="text-primary-400 text-lg" />
-                <h3 class="text-base font-semibold text-white">{{ item.title }}</h3>
+                <UIcon :name="item.icon" class="text-primary-500 dark:text-primary-400 text-lg" />
+                <h3 class="text-base font-semibold text-neutral-900 dark:text-white">{{ item.title }}</h3>
               </div>
-              <p class="text-sm text-neutral-400 leading-relaxed">{{ item.description }}</p>
+              <p class="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ item.description }}</p>
             </div>
           </div>
         </div>

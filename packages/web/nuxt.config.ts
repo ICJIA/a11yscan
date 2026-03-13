@@ -34,7 +34,12 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: ['/', '/features', '/docs', '/roadmap'],
+      routes: ['/', '/features', '/docs', '/roadmap', '/404.html'],
+    },
+    devStorage: {
+      cache: {
+        driver: 'memory',
+      },
     },
   },
 
