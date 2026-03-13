@@ -6,7 +6,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <div class="flex items-center gap-8">
-          <NuxtLink to="/" class="flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-white hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          <NuxtLink to="/" class="flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-white hover:text-primary-500 dark:hover:text-primary-400 transition-colors" @click="scrollToTop">
             <span class="text-primary-500 dark:text-primary-400 font-mono text-sm">&lt;/&gt;</span>
             a11yscan
           </NuxtLink>
@@ -58,4 +58,8 @@ const route = useRoute();
 watch(() => route.fullPath, () => {
   mobileMenuOpen.value = false;
 });
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
