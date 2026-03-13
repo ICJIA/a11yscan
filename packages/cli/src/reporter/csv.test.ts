@@ -17,6 +17,9 @@ const samplePatterns: ViolationPattern[] = [
     affectedUrls: ['https://example.com/a', 'https://example.com/b'],
     suggestedFix: 'https://dequeuniversity.com/rules/axe/4.x/aria-roles',
     rootCauseHint: 'Likely Vuetify component',
+    htmlSnippet: '<div class="v-autocomplete__content" role="listbox"></div>',
+    failureSummary: 'Fix any of the following: Role "listbox" is not allowed for given element',
+    rawSelector: '.v-autocomplete__content',
   },
 ];
 

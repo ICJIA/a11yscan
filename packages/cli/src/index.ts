@@ -8,10 +8,4 @@
 import { createProgram } from './cli/direct.js';
 
 const program = createProgram();
-
-// If no arguments beyond node + script, show help (wizard placeholder for Phase 3)
-if (process.argv.length <= 2) {
-  program.help();
-} else {
-  program.parse(process.argv);
-}
+program.parse(process.argv);

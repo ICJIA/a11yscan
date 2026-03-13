@@ -28,6 +28,9 @@ const sampleReport: JsonReport = {
       affectedUrls: ['https://example.com/a', 'https://example.com/b', 'https://example.com/c'],
       suggestedFix: 'https://dequeuniversity.com/rules/axe/4.x/aria-roles',
       rootCauseHint: 'Likely Vuetify component',
+      htmlSnippet: '<div class="v-btn" role="invalid"></div>',
+      failureSummary: 'Fix any of the following: Role "invalid" is not a valid ARIA role',
+      rawSelector: '.v-btn',
     },
   ],
   skippedUrls: [

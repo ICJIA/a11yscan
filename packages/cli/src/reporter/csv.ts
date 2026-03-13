@@ -19,11 +19,13 @@ const REPORTS_DIR = resolve(process.cwd(), 'reports');
  */
 export async function writeCSV(
   patterns: ViolationPattern[],
-  filename: string
+  filename: string,
+  siteReportsDir?: string
 ): Promise<string> {
-  await mkdir(REPORTS_DIR, { recursive: true });
+  const dir = siteReportsDir || REPORTS_DIR;
+  await mkdir(dir, { recursive: true });
 
-  const filePath = join(REPORTS_DIR, `${filename}.csv`);
+  const filePath = join(dir, `${filename}.csv`);
 
   const csvWriter = createObjectCsvWriter({
     path: filePath,

@@ -26,7 +26,7 @@ export const TOOL_VERSION = '1.0.0';
  * Default output formats when --output is not specified.
  * Valid values: 'csv', 'json'
  */
-export const DEFAULT_OUTPUT_FORMATS = ['csv', 'json'];
+export const DEFAULT_OUTPUT_FORMATS = ['csv', 'json', 'html'];
 
 /**
  * Default base filename for reports (timestamp is appended automatically).
@@ -44,7 +44,7 @@ export const REPORTS_DIR = 'reports';
  * Higher values = faster scans, but more memory and CPU.
  * Range: 1–5 (enforced by CLI flag validation).
  */
-export const DEFAULT_CONCURRENCY = 3;
+export const DEFAULT_CONCURRENCY = 4;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODERATE CHANGES — Understand the implications before editing.
@@ -90,7 +90,7 @@ export const SITEMAP_RETRY_DELAY = 5_000;
 /**
  * Valid output format options. Used for CLI flag validation.
  */
-export const VALID_OUTPUT_FORMATS = ['csv', 'json'] as const;
+export const VALID_OUTPUT_FORMATS = ['csv', 'json', 'html'] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CAREFUL CHANGES — These affect scan coverage and accuracy.

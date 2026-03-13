@@ -12,7 +12,9 @@ import { buildAxeConfig } from '../scanner/axe.js';
 import { ScannerManager } from '../scanner/playwright.js';
 import { analyzePatterns, type ViolationPattern } from '../analyzer/patterns.js';
 import { writeCSV } from '../reporter/csv.js';
-import { writeJSON, sanitizeFilename, type JsonReport, type SkippedUrl } from '../reporter/json.js';
+import { writeJSON, sanitizeFilename, prepareSiteReportsDir, type JsonReport, type SkippedUrl } from '../reporter/json.js';
+import { writeHTML } from '../reporter/html.js';
+import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -30,6 +32,16 @@ function getVersion(): string {
   }
 }
 
+function askYesNo(prompt: string): Promise<boolean> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(prompt, (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase() === 'y');
+    });
+  });
+}
+
 function generateTimestamp(): string {
   const now = new Date();
   const y = now.getFullYear();
@@ -40,6 +52,38 @@ function generateTimestamp(): string {
   return `${y}-${m}-${d}-${h}${min}`;
 }
 
+/**
+ * Resolve the sitemap URL from a bare site URL or explicit --sitemap flag.
+ * If given "https://example.com", tries "https://example.com/sitemap.xml".
+ * Returns the resolved sitemap URL or null if unreachable.
+ */
+async function resolveSitemapUrl(input: string): Promise<string | null> {
+  // Auto-prepend https:// if no protocol is present
+  if (!/^https?:\/\//i.test(input)) {
+    input = `https://${input}`;
+  }
+
+  // If it already ends with .xml, use as-is
+  if (/\.xml$/i.test(input)) {
+    return input;
+  }
+
+  // Ensure trailing slash then append sitemap.xml
+  const base = input.replace(/\/+$/, '');
+  const candidate = `${base}/sitemap.xml`;
+
+  // Quick HEAD check to verify it exists
+  try {
+    const res = await fetch(candidate, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+    if (res.ok) {
+      return candidate;
+    }
+  } catch {
+    // fetch failed — sitemap not reachable
+  }
+  return null;
+}
+
 export function createProgram(): Command {
   const version = getVersion();
 
@@ -47,17 +91,54 @@ export function createProgram(): Command {
     .name('a11yscan')
     .description('Pattern-aware accessibility auditor for ARIA roles, accessible names, and color contrast')
     .version(version)
-    .requiredOption('--sitemap <url>', 'URL to sitemap.xml')
+    .argument('[url]', 'Site URL (auto-appends /sitemap.xml) or full sitemap URL')
+    .option('--sitemap <url>', 'Explicit URL to sitemap.xml')
     .option('--filter <path>', 'Path prefix to include (e.g., /research)')
     .option('--filter-glob <pattern>', 'Glob pattern to match URL pathnames')
     .option('--exclude <paths>', 'Comma-separated path prefixes to exclude')
     .option('--depth <n>', 'Max URL path depth to include', parseInt)
     .option('--limit <n>', 'Max number of pages to scan', parseInt)
-    .option('--output <formats>', 'Comma-separated output formats: csv, json', 'csv,json')
+    .option('--output <formats>', 'Comma-separated output formats: csv, json, html', 'csv,json,html')
     .option('--filename <name>', 'Base filename for reports')
-    .option('--concurrency <n>', 'Parallel pages to scan (1-5)', parseInt, 3)
+    .option('--concurrency <n>', 'Parallel pages to scan (1-5)', parseInt, 4)
     .option('--ci', 'CI mode: minimal output, exit 1 on violations', false)
-    .action(async (opts) => {
+    .action(async (url, opts) => {
+      // Resolve sitemap URL from positional arg or --sitemap flag
+      let sitemapUrl: string | undefined = opts.sitemap;
+
+      if (!sitemapUrl && url) {
+        const isCi = opts.ci;
+        // Normalize: auto-prepend https:// if missing
+        const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+        const displayUrl = normalizedUrl.replace(/\/+$/, '');
+        if (!isCi) {
+          process.stdout.write(chalk.dim(`Checking for sitemap at ${displayUrl}/sitemap.xml... `));
+        }
+        const resolved = await resolveSitemapUrl(normalizedUrl);
+        if (resolved) {
+          sitemapUrl = resolved;
+          if (!isCi) {
+            console.log(chalk.green('found'));
+          }
+        } else {
+          if (!isCi) {
+            console.log(chalk.red('not found'));
+            console.error(
+              chalk.red(`\nError: Could not find a sitemap at ${displayUrl}/sitemap.xml`) +
+              chalk.dim('\n  Specify the sitemap URL directly: a11yscan --sitemap <url>')
+            );
+          }
+          process.exit(2);
+        }
+      }
+
+      if (!sitemapUrl) {
+        console.error(chalk.red('Error: Provide a site URL or use --sitemap <url>'));
+        program.help();
+        process.exit(2);
+      }
+
+      opts.sitemap = sitemapUrl;
       await runScan(opts, version);
     });
 
@@ -96,7 +177,7 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
 
   // Parse output formats
   const formats = opts.output.split(',').map((f) => f.trim().toLowerCase());
-  const validFormats = ['csv', 'json'];
+  const validFormats = ['csv', 'json', 'html'];
   for (const f of formats) {
     if (!validFormats.includes(f)) {
       if (!isCi) {
@@ -170,6 +251,9 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
     console.log(chalk.dim(`\nScanning ${filteredUrls.length} pages with Playwright (concurrency: ${concurrency})...`));
   }
 
+  // Prepare site-specific reports directory (clears previous scan)
+  const siteReportsDir = await prepareSiteReportsDir(opts.sitemap);
+
   const axeConfig = buildAxeConfig();
   const scanner = new ScannerManager();
   const scanResults = new Map<string, AxeResults>();
@@ -187,7 +271,7 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
     }
     await writeReports(
       scanResults, skippedUrls, filteredUrls.length, opts, formats,
-      filename, version, true, interruptReason
+      filename, version, true, interruptReason, undefined, siteReportsDir
     );
     await scanner.close();
     process.exit(3);
@@ -251,7 +335,7 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
     }
     await writeReports(
       scanResults, skippedUrls, filteredUrls.length, opts, formats,
-      filename, version, true, interruptReason
+      filename, version, true, interruptReason, undefined, siteReportsDir
     );
     await scanner.close();
     process.exit(3);
@@ -265,7 +349,7 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
   // --- Write reports ---
   const reportPaths = await writeReports(
     scanResults, skippedUrls, filteredUrls.length, opts, formats,
-    filename, version, false, undefined, patterns
+    filename, version, false, undefined, patterns, siteReportsDir
   );
 
   // --- Terminal output ---
@@ -282,6 +366,17 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
       console.log(chalk.dim(`    ${rp}`));
     }
     console.log();
+
+    // Offer to open HTML report
+    const htmlPath = reportPaths.find((p) => p.endsWith('.html'));
+    if (htmlPath) {
+      const shouldOpen = await askYesNo('View HTML report in browser? (y/N) ');
+      if (shouldOpen) {
+        const { exec } = await import('node:child_process');
+        const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+        exec(`${cmd} "${htmlPath}"`);
+      }
+    }
   }
 
   // CI mode JSON output
@@ -313,7 +408,8 @@ async function writeReports(
   version: string,
   interrupted: boolean,
   interruptReason?: string,
-  patternsOverride?: ViolationPattern[]
+  patternsOverride?: ViolationPattern[],
+  siteReportsDir?: string
 ): Promise<string[]> {
   const patterns = patternsOverride || analyzePatterns(scanResults, scanResults.size);
   const totalViolations = patterns.reduce((sum, p) => sum + p.affectedPageCount, 0);
@@ -337,12 +433,33 @@ async function writeReports(
       patterns,
       skippedUrls,
     };
-    const path = await writeJSON(report, filename);
+    const path = await writeJSON(report, filename, siteReportsDir);
     reportPaths.push(path);
   }
 
   if (formats.includes('csv')) {
-    const path = await writeCSV(patterns, filename);
+    const path = await writeCSV(patterns, filename, siteReportsDir);
+    reportPaths.push(path);
+  }
+
+  if (formats.includes('html')) {
+    const report: JsonReport = {
+      meta: {
+        generatedAt: new Date().toISOString(),
+        sitemap: opts.sitemap,
+        filter: opts.filter || null,
+        pagesScanned: scanResults.size,
+        pagesSkipped: skippedUrls.length,
+        totalViolations,
+        totalPatterns: patterns.length,
+        tool: 'a11yscan',
+        version,
+        ...(interrupted && { interrupted: true, interruptReason }),
+      },
+      patterns,
+      skippedUrls,
+    };
+    const path = await writeHTML(report, filename, siteReportsDir);
     reportPaths.push(path);
   }
 

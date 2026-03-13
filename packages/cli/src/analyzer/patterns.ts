@@ -14,6 +14,12 @@ export interface ViolationPattern {
   affectedUrls: string[];
   suggestedFix: string;
   rootCauseHint: string;
+  /** Representative HTML snippet from the first occurrence (for LLM consumption) */
+  htmlSnippet: string;
+  /** What the element must do to pass (from axe-core failure summary) */
+  failureSummary: string;
+  /** Original (non-normalized) CSS selector path to the element */
+  rawSelector: string;
 }
 
 /**
@@ -94,6 +100,9 @@ export function analyzePatterns(
       normalizedSelector: string;
       affectedUrls: Set<string>;
       suggestedFix: string;
+      htmlSnippet: string;
+      failureSummary: string;
+      rawSelector: string;
     }
   >();
 
@@ -112,6 +121,9 @@ export function analyzePatterns(
             normalizedSelector: normalized,
             affectedUrls: new Set<string>(),
             suggestedFix: violation.helpUrl,
+            htmlSnippet: node.html || '',
+            failureSummary: node.failureSummary || '',
+            rawSelector: selectorRaw,
           });
         }
 
@@ -144,6 +156,9 @@ export function analyzePatterns(
       entry.affectedPageCount,
       totalPages
     ),
+    htmlSnippet: entry.htmlSnippet,
+    failureSummary: entry.failureSummary,
+    rawSelector: entry.rawSelector,
   }));
 }
 

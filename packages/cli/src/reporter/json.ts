@@ -2,11 +2,35 @@
  * JSON report writer — structured report with metadata, patterns, and skipped URLs.
  */
 
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import type { ViolationPattern } from '../analyzer/patterns.js';
 
 const REPORTS_DIR = resolve(process.cwd(), 'reports');
+
+/**
+ * Derive a safe directory name from a sitemap URL's hostname.
+ * e.g., "https://vuepress.vuejs.org/sitemap.xml" → "vuepress.vuejs.org"
+ */
+export function siteDir(sitemapUrl: string): string {
+  try {
+    const hostname = new URL(sitemapUrl).hostname.toLowerCase();
+    return hostname.replace(/[^a-z0-9.-]/g, '');
+  } catch {
+    return 'unknown-site';
+  }
+}
+
+/**
+ * Get the site-specific reports directory and ensure it exists.
+ * Clears any previous reports in the directory first (keeps only latest scan).
+ */
+export async function prepareSiteReportsDir(sitemapUrl: string): Promise<string> {
+  const dir = resolve(REPORTS_DIR, siteDir(sitemapUrl));
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  return dir;
+}
 
 export interface SkippedUrl {
   url: string;
@@ -56,11 +80,13 @@ export function sanitizeFilename(input: string): string {
  */
 export async function writeJSON(
   report: JsonReport,
-  filename: string
+  filename: string,
+  siteReportsDir?: string
 ): Promise<string> {
-  await mkdir(REPORTS_DIR, { recursive: true });
+  const dir = siteReportsDir || REPORTS_DIR;
+  await mkdir(dir, { recursive: true });
 
-  const filePath = join(REPORTS_DIR, `${filename}.json`);
+  const filePath = join(dir, `${filename}.json`);
   await writeFile(filePath, JSON.stringify(report, null, 2), 'utf-8');
   return filePath;
 }
