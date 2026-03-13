@@ -12,8 +12,9 @@ import { buildAxeConfig } from '../scanner/axe.js';
 import { ScannerManager } from '../scanner/playwright.js';
 import { analyzePatterns, type ViolationPattern } from '../analyzer/patterns.js';
 import { writeCSV } from '../reporter/csv.js';
-import { writeJSON, sanitizeFilename, prepareSiteReportsDir, type JsonReport, type SkippedUrl } from '../reporter/json.js';
+import { writeJSON, sanitizeFilename, prepareSiteReportsDir, groupPatterns, type JsonReport, type SkippedUrl } from '../reporter/json.js';
 import { writeHTML } from '../reporter/html.js';
+import { writeMarkdown } from '../reporter/markdown.js';
 import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -177,7 +178,7 @@ async function runScan(opts: ScanOptions, version: string): Promise<void> {
 
   // Parse output formats
   const formats = opts.output.split(',').map((f) => f.trim().toLowerCase());
-  const validFormats = ['csv', 'json', 'html'];
+  const validFormats = ['csv', 'json', 'html', 'md'];
   for (const f of formats) {
     if (!validFormats.includes(f)) {
       if (!isCi) {
@@ -416,23 +417,27 @@ async function writeReports(
 
   const reportPaths: string[] = [];
 
+  const meta = {
+    generatedAt: new Date().toISOString(),
+    sitemap: opts.sitemap,
+    filter: opts.filter || null,
+    pagesScanned: scanResults.size,
+    pagesSkipped: skippedUrls.length,
+    totalViolations,
+    totalPatterns: patterns.length,
+    tool: 'a11yscan' as const,
+    version,
+    ...(interrupted && { interrupted: true, interruptReason }),
+  };
+
+  const report: JsonReport = {
+    meta,
+    patternGroups: groupPatterns(patterns),
+    patterns,
+    skippedUrls,
+  };
+
   if (formats.includes('json')) {
-    const report: JsonReport = {
-      meta: {
-        generatedAt: new Date().toISOString(),
-        sitemap: opts.sitemap,
-        filter: opts.filter || null,
-        pagesScanned: scanResults.size,
-        pagesSkipped: skippedUrls.length,
-        totalViolations,
-        totalPatterns: patterns.length,
-        tool: 'a11yscan',
-        version,
-        ...(interrupted && { interrupted: true, interruptReason }),
-      },
-      patterns,
-      skippedUrls,
-    };
     const path = await writeJSON(report, filename, siteReportsDir);
     reportPaths.push(path);
   }
@@ -443,23 +448,12 @@ async function writeReports(
   }
 
   if (formats.includes('html')) {
-    const report: JsonReport = {
-      meta: {
-        generatedAt: new Date().toISOString(),
-        sitemap: opts.sitemap,
-        filter: opts.filter || null,
-        pagesScanned: scanResults.size,
-        pagesSkipped: skippedUrls.length,
-        totalViolations,
-        totalPatterns: patterns.length,
-        tool: 'a11yscan',
-        version,
-        ...(interrupted && { interrupted: true, interruptReason }),
-      },
-      patterns,
-      skippedUrls,
-    };
     const path = await writeHTML(report, filename, siteReportsDir);
+    reportPaths.push(path);
+  }
+
+  if (formats.includes('md')) {
+    const path = await writeMarkdown(report, filename, siteReportsDir);
     reportPaths.push(path);
   }
 

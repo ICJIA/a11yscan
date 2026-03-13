@@ -9,7 +9,9 @@
     "dev:web": "pnpm --filter a11yscan-web dev",
     "build:web": "pnpm --filter a11yscan-web build",
     "generate": "pnpm --filter a11yscan-web generate",
-    "test": "pnpm --filter cli test",
+    "test": "pnpm -r test",
+    "test:cli": "pnpm --filter a11yscan test",
+    "test:web": "pnpm --filter a11yscan-web test",
     "lint": "pnpm --filter cli lint"
   },
   "devDependencies": {

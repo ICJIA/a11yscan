@@ -26,6 +26,14 @@ a11yscan groups violations by the *root cause* — the combination of the axe-co
 
 Each pattern tells you exactly what's broken, where it appears, how many pages it affects, and what framework component is likely responsible. You fix 12 things, not 2,745.
 
+### Pattern-grouped reports
+
+Every report format — JSON, CSV, HTML, and Markdown — groups violations by pattern type. All `color-contrast` patterns appear together, all `aria-roles` patterns together. Each group shows:
+
+- The violation description and fix guide link
+- Total patterns and affected pages for that violation type
+- Individual patterns with selectors, HTML snippets, and affected URLs
+
 ### LLM-ready reports
 
 The JSON report includes everything an LLM needs to generate fixes without human hand-holding:
@@ -54,9 +62,22 @@ Feed the JSON to Claude, GPT, or any code-generation LLM and get actionable diff
 
 ## Installation
 
-### macOS / Linux (Ubuntu)
+### macOS
 
 ```bash
+pnpm add -g a11yscan
+npx playwright install chromium
+```
+
+### Ubuntu / Debian
+
+```bash
+# Install Chromium system dependencies
+sudo apt-get update && sudo apt-get install -y \
+  libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+  libxcomposite1 libxdamage1 libxrandr2 libgbm1 \
+  libpango-1.0-0 libcairo2 libasound2
+
 pnpm add -g a11yscan
 npx playwright install chromium
 ```
@@ -68,39 +89,17 @@ Windows native is not supported. You must use WSL2 with an Ubuntu distro.
 ```bash
 # 1. Enable WSL2 and install Ubuntu from Microsoft Store
 #    https://learn.microsoft.com/en-us/windows/wsl/install
-# 2. Open Ubuntu terminal:
-pnpm add -g a11yscan
-npx playwright install chromium
+# 2. Open Ubuntu terminal and follow the Ubuntu instructions above
 ```
-
-#### WSL2 Requirements
-
-- WSL2 enabled (not WSL1)
-- Ubuntu 22.04 or 24.04 distro installed
-- Node.js 20+ installed inside WSL2 (not Windows Node)
-- Playwright browser binaries installed inside WSL2
-- All commands run from WSL2 terminal, not Windows Command Prompt or PowerShell
 
 ### Shell alias (local development)
 
-If you're running a11yscan from source rather than a global install, add an alias to your shell config so you can call `a11yscan` from anywhere:
+If you're running a11yscan from source rather than a global install, add an alias to your shell config:
 
-**zsh** (add to `~/.zshrc`):
 ```bash
-# a11yscan CLI
+# Add to ~/.zshrc or ~/.bashrc
 alias a11yscan='node /path/to/a11yscan.dev/packages/cli/dist/index.js'
-```
-
-**bash** (add to `~/.bashrc`):
-```bash
-# a11yscan CLI
-alias a11yscan='node /path/to/a11yscan.dev/packages/cli/dist/index.js'
-```
-
-Replace `/path/to/a11yscan.dev` with the actual path to your clone. Then reload your shell:
-
-```bash
-source ~/.zshrc   # or source ~/.bashrc
+source ~/.zshrc
 ```
 
 ## Usage
@@ -110,7 +109,7 @@ source ~/.zshrc   # or source ~/.bashrc
 a11yscan automatically looks for `/sitemap.xml` at the site root. No flags needed. Protocol is optional — `https://` is auto-prepended if missing:
 
 ```bash
-a11yscan r3.illinois.gov
+a11yscan example.com
 ```
 
 If the sitemap isn't at the root, specify it directly:
@@ -121,16 +120,12 @@ a11yscan --sitemap https://example.com/custom-path/sitemap.xml
 
 ### Scan only a specific section (prefix filter)
 
-Use `--filter` to scan only pages whose URL path starts with a given prefix. This is the fastest way to audit a single section of a large site:
-
 ```bash
 # Scan only /about pages
 a11yscan example.com --filter "/about"
 
 # Scan only /research pages, excluding the archive
-a11yscan example.com \
-  --filter "/research" \
-  --exclude "/research/archive"
+a11yscan example.com --filter "/research" --exclude "/research/archive"
 
 # Scan /news but limit to the first 20 pages
 a11yscan example.com --filter "/news" --limit 20
@@ -138,17 +133,12 @@ a11yscan example.com --filter "/news" --limit 20
 
 ### Scan with glob patterns
 
-Use `--filter-glob` for more flexible matching with wildcards. Patterns match against the URL pathname using picomatch syntax:
-
 ```bash
 # All service pages under any top-level section
 a11yscan example.com --filter-glob "/*/services/**"
 
 # Only pages exactly two levels deep
 a11yscan example.com --filter-glob "/*/*"
-
-# All "about" pages regardless of nesting
-a11yscan example.com --filter-glob "**/about*"
 ```
 
 ### Combine prefix and glob filters
@@ -161,36 +151,21 @@ a11yscan example.com --filter "/grants" --filter-glob "/grants/*/overview"
 
 ### Exclude specific sections
 
-Use `--exclude` with comma-separated prefixes to skip sections:
-
 ```bash
 a11yscan example.com --exclude "/blog,/archive"
-```
-
-### Control scan depth
-
-Use `--depth` to limit how deep into the URL path hierarchy to scan:
-
-```bash
-# Only top-level pages (e.g., /about, /contact — not /about/team/leadership)
-a11yscan example.com --depth 1
 ```
 
 ### Custom report filenames
 
 ```bash
 a11yscan example.com --filter "/research" --filename "research-audit-q1"
-# Produces: reports/example.com/research-audit-q1.json, .csv, .html
 ```
 
-### Adjust concurrency
+### Markdown output for GitHub issues
 
 ```bash
-# Slower but gentler on the target server
-a11yscan example.com --concurrency 1
-
-# Faster scans (max 5 parallel pages)
-a11yscan example.com --concurrency 5
+a11yscan example.com --output csv,json,html,md
+# Produces a GitHub-flavored Markdown report alongside the defaults
 ```
 
 ### CI/CD mode
@@ -221,29 +196,30 @@ a11yscan example.com --ci --output json
 | `--exclude <paths>` | string | (none) | Comma-separated path prefixes to exclude |
 | `--depth <n>` | number | unlimited | Max URL path depth to include |
 | `--limit <n>` | number | unlimited | Max number of pages to scan |
-| `--output <formats>` | string | `csv,json,html` | Comma-separated: csv, json, html |
+| `--output <formats>` | string | `csv,json,html` | Comma-separated: csv, json, html, md |
 | `--filename <name>` | string | `aria-report-{timestamp}` | Base filename for reports |
 | `--concurrency <n>` | number | `4` | Parallel pages to scan (1-5) |
 | `--ci` | boolean | `false` | CI mode: JSON to stdout, exit codes |
 
 ## Report Output
 
-Reports are saved to `./reports/{hostname}/` — one subfolder per site. Each scan replaces the previous reports for that site, so you always have the latest results.
+Reports are saved to `./reports/{hostname}/{timestamp}/` — one timestamped subfolder per scan. Previous scans are preserved for diffing and trend analysis.
 
 **Default output (csv + json + html):**
 ```
 reports/
-  r3.illinois.gov/
-    aria-report-2026-03-13-0948.csv
-    aria-report-2026-03-13-0948.json
-    aria-report-2026-03-13-0948.html
-  icjia.illinois.gov/
-    aria-report-2026-03-13-1015.csv
-    aria-report-2026-03-13-1015.json
-    aria-report-2026-03-13-1015.html
+  example.com/
+    2026-03-13_09-48-00/
+      aria-report-2026-03-13-0948.csv
+      aria-report-2026-03-13-0948.json
+      aria-report-2026-03-13-0948.html
+    2026-03-13_10-15-00/
+      aria-report-2026-03-13-1015.csv
+      aria-report-2026-03-13-1015.json
+      aria-report-2026-03-13-1015.html
 ```
 
-After each scan, you're prompted to open the HTML report in your browser. The HTML report is a self-contained, styled page with sortable patterns, impact badges, HTML snippets, and expandable URL lists.
+All reports group violations by pattern type. The HTML report features interactive sections per violation type with impact badges, HTML snippets, and expandable URL lists. After each scan, you're prompted to open the HTML report in your browser.
 
 ## Exit Codes
 
@@ -256,98 +232,52 @@ After each scan, you're prompted to open the HTML report in your browser. The HT
 
 ## Configuration
 
-All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for:
+All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for tool identity, default output formats, concurrency limits, timeouts, axe-core rules, blocked hosts, root cause patterns, exit codes, and CSV column headers.
 
-- Tool identity (name, version)
-- Default output formats and report directory
-- Concurrency limits
-- Timeouts (page load, network idle, sitemap fetch)
-- axe-core rule IDs to scan
-- Blocked hosts (SSRF prevention)
-- Root cause hint patterns
-- Exit codes
-- CSV column headers
+## Testing
 
-The file is organized from easy-to-change values at the top (report prefix, concurrency) to values that require careful testing at the bottom (axe rules, exit codes).
+```bash
+# Run all tests (CLI + web)
+pnpm test
 
-## Deployment
+# Run CLI tests only
+pnpm test:cli
 
-### Marketing site — Netlify
+# Run web app tests only
+pnpm test:web
+```
 
-The marketing site (`packages/web`) is a Nuxt 4 static site that deploys to Netlify:
-
-1. Connect the GitHub repo to Netlify
-2. Set the build settings:
-   - **Base directory:** `packages/web`
-   - **Build command:** `pnpm generate`
-   - **Publish directory:** `packages/web/.output/public`
-   - **Node version:** `20` (set in `.nvmrc` or Netlify environment)
-3. Netlify will auto-deploy on every push to `main`
-
-### CLI tool — Digital Ocean / Laravel Forge
-
-The CLI (`packages/cli`) runs as a Node.js process on a server. It needs a headless Chromium browser, so it requires a real server (not serverless).
-
-**Recommended setup with Laravel Forge on a Digital Ocean droplet:**
-
-1. **Droplet spec:** 2 vCPU / 4 GB RAM minimum (Chromium is memory-hungry)
-2. **OS:** Ubuntu 22.04 or 24.04
-3. **Provision with Forge:** Let Forge set up the droplet with Node.js 20+
-4. **Install dependencies:**
-   ```bash
-   # On the droplet via Forge SSH
-   cd /home/forge/a11yscan
-   pnpm install --frozen-lockfile
-   pnpm --filter a11yscan build
-   npx playwright install --with-deps chromium
-   ```
-5. **Run scans via Forge scheduler or SSH:**
-   ```bash
-   node /home/forge/a11yscan/packages/cli/dist/index.js \
-     --sitemap https://yoursite.com/sitemap.xml \
-     --output json \
-     --filename "scheduled-audit"
-   ```
-6. **Optional: Forge cron job** for scheduled audits (e.g., weekly):
-   ```
-   0 6 * * 1  cd /home/forge/a11yscan && node packages/cli/dist/index.js --sitemap https://yoursite.com/sitemap.xml --output csv,json,html --filename "weekly-audit"
-   ```
-
-**Why not serverless?** Playwright requires a persistent Chromium process. Lambda/Cloud Functions have 512 MB memory limits and no persistent browser processes. A $24/mo DO droplet handles this easily.
+114 tests across 11 test files covering pattern analysis, URL filtering, sitemap fetching, all four report formats (CSV, JSON, HTML, Markdown), axe configuration, component rendering, and WCAG 2.1 AA compliance.
 
 ## Roadmap
 
-### Phase 1 — CLI Scanner (current)
+### Phase 1 — CLI Scanner ✓
 
 The core scanning engine. Everything needed to audit a site from the command line.
 
 - Sitemap fetching with SSRF protection and retry logic
 - URL filtering: prefix, glob (picomatch), exclude, depth, limit
-- Bare URL mode with auto-sitemap discovery (`a11yscan r3.illinois.gov`)
+- Bare URL mode with auto-sitemap discovery
 - Playwright scanner with AxeBuilder API, concurrency (p-limit, default 4)
 - Browser crash recovery with automatic relaunch
 - Pattern analysis: violations grouped by rule + normalized CSS selector
 - Root cause hints (Vuetify, Nuxt, WordPress, Material UI, etc.)
-- CSV, JSON, and HTML reporters
+- CSV, JSON, and HTML reporters with pattern grouping
 - LLM-ready JSON with `htmlSnippet`, `failureSummary`, `rawSelector`
-- Per-site report subfolders with auto-cleanup (latest scan only)
+- Per-site timestamped report folders (preserved for diffing)
 - SIGINT handling with partial report writing
 - CI/CD mode with machine-readable JSON output
-- `a11y.config.ts` single source of truth for all configurable values
-- 54 unit tests across all modules
+- `a11y.config.ts` single source of truth
+- 114 unit tests across CLI and web
 
-### Phase 2 — Extended Reporters
+### Phase 2 — Extended Reporters (in progress)
 
-Additional output formats and reporting enhancements.
-
-- Markdown reporter (for pasting into GitHub issues / PRs)
+- ~~Markdown reporter for GitHub issues and PRs~~ ✓
 - Report diffing: compare two scans to show new/resolved patterns
 - Trend tracking across multiple scan runs
-- Summary email digest (for scheduled server scans)
+- Summary email digest for scheduled server scans
 
 ### Phase 3 — Interactive Wizard
-
-Guided mode for users who don't want to memorize CLI flags.
 
 - Interactive wizard via inquirer (ESM-compatible)
 - Saved scan profiles (re-run common scans with a single command)
@@ -356,19 +286,16 @@ Guided mode for users who don't want to memorize CLI flags.
 
 ### Phase 4 — Puppeteer Fallback
 
-Alternative browser engine for environments where Playwright is unavailable.
-
 - Puppeteer scanner as drop-in alternative to Playwright
 - `--engine puppeteer` flag
 - Shared ScannerManager interface between engines
 
-### Phase 5 — Marketing Site
+### Phase 5 — Marketing Site (in progress)
 
-Public-facing site at a11yscan.dev for documentation and demos.
-
-- Nuxt 4 + Nuxt UI static site
-- Deployed to Netlify via `pnpm generate`
-- Interactive demo, documentation, and pattern gallery
+- ~~Nuxt 4 + Nuxt UI 4.5.1 static site~~ ✓
+- ~~Deployed to Netlify via `pnpm generate`~~ ✓
+- ~~WCAG 2.1 AA compliant~~ ✓
+- Interactive demo and pattern gallery
 - SEO and OpenGraph metadata
 
 ## Platform Support

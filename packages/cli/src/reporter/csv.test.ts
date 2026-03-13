@@ -40,11 +40,11 @@ describe('writeCSV', () => {
     // Header + 1 data row
     expect(lines.length).toBe(2);
 
-    // 9 columns
+    // 11 columns
     const headerCols = lines[0].split(',');
-    expect(headerCols.length).toBe(9);
-    expect(headerCols[0]).toBe('Pattern ID');
-    expect(headerCols[8]).toBe('Affected URLs');
+    expect(headerCols.length).toBe(11);
+    expect(headerCols[0]).toBe('Violation Type');
+    expect(headerCols[10]).toBe('Affected URLs');
   });
 
   it('pipe-separates affected URLs in last column', async () => {

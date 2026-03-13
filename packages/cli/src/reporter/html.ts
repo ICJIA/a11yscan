@@ -1,10 +1,13 @@
 /**
  * HTML report writer — self-contained, human-readable accessibility report.
+ * Patterns are grouped by violation type (e.g., all color-contrast patterns
+ * under one heading, all aria-roles under another).
  */
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import type { JsonReport } from './json.js';
+import type { ViolationPattern } from '../analyzer/patterns.js';
 
 const REPORTS_DIR = resolve(process.cwd(), 'reports');
 
@@ -27,28 +30,39 @@ function impactBadge(impact: string): string {
   return `<span style="background:${bg};color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">${escapeHtml(impact)}</span>`;
 }
 
-function buildHtml(report: JsonReport): string {
-  const { meta, patterns, skippedUrls } = report;
-  const criticalCount = patterns.filter((p) => p.impact === 'critical').length;
-  const seriousCount = patterns.filter((p) => p.impact === 'serious').length;
+/** Group patterns by violationId, preserving order of first appearance. */
+function groupByViolation(
+  patterns: ViolationPattern[]
+): Map<string, { description: string; impact: string; fixUrl: string; patterns: ViolationPattern[] }> {
+  const groups = new Map<
+    string,
+    { description: string; impact: string; fixUrl: string; patterns: ViolationPattern[] }
+  >();
 
-  const patternRows = patterns
-    .map(
-      (p) => `
+  for (const p of patterns) {
+    if (!groups.has(p.violationId)) {
+      groups.set(p.violationId, {
+        description: p.violationDescription,
+        impact: p.impact,
+        fixUrl: p.suggestedFix,
+        patterns: [],
+      });
+    }
+    groups.get(p.violationId)!.patterns.push(p);
+  }
+
+  return groups;
+}
+
+function buildPatternRow(p: ViolationPattern): string {
+  return `
     <tr>
       <td><code>${escapeHtml(p.patternId)}</code></td>
       <td>${impactBadge(p.impact)}</td>
-      <td>
-        <strong>${escapeHtml(p.violationId)}</strong><br>
-        <span style="color:#555;font-size:13px;">${escapeHtml(p.violationDescription)}</span>
-      </td>
       <td><code style="font-size:12px;">${escapeHtml(p.normalizedSelector)}</code></td>
       <td style="text-align:center;font-weight:600;">${p.affectedPageCount}</td>
       <td><span style="color:#555;font-size:13px;">${escapeHtml(p.rootCauseHint)}</span></td>
-      <td>${p.htmlSnippet ? `<pre style="margin:0;font-size:11px;max-width:320px;overflow-x:auto;background:#f5f5f5;padding:4px 6px;border-radius:3px;white-space:pre-wrap;word-break:break-all;">${escapeHtml(p.htmlSnippet)}</pre>` : '<span style="color:#999;">—</span>'}</td>
-      <td>
-        <a href="${escapeHtml(p.suggestedFix)}" target="_blank" rel="noopener" style="font-size:12px;">Fix guide</a>
-      </td>
+      <td>${p.htmlSnippet ? `<pre style="margin:0;font-size:11px;max-width:320px;overflow-x:auto;background:#f5f5f5;padding:4px 6px;border-radius:3px;white-space:pre-wrap;word-break:break-all;">${escapeHtml(p.htmlSnippet)}</pre>` : '<span style="color:#999;">&mdash;</span>'}</td>
       <td>
         <details><summary style="cursor:pointer;font-size:12px;">${p.affectedUrls.length} URL${p.affectedUrls.length !== 1 ? 's' : ''}</summary>
         <ul style="margin:4px 0;padding-left:16px;font-size:11px;">
@@ -56,8 +70,52 @@ function buildHtml(report: JsonReport): string {
         </ul>
         </details>
       </td>
-    </tr>`
-    )
+    </tr>`;
+}
+
+function buildGroupSection(
+  violationId: string,
+  group: { description: string; impact: string; fixUrl: string; patterns: ViolationPattern[] }
+): string {
+  const totalPages = new Set(group.patterns.flatMap((p) => p.affectedUrls)).size;
+
+  return `
+  <div class="group">
+    <div class="group-header">
+      <div class="group-title">
+        <h3>${escapeHtml(violationId)}</h3>
+        ${impactBadge(group.impact)}
+        <span class="group-stats">${group.patterns.length} pattern${group.patterns.length !== 1 ? 's' : ''} across ${totalPages} page${totalPages !== 1 ? 's' : ''}</span>
+      </div>
+      <p class="group-desc">${escapeHtml(group.description)}</p>
+      <a href="${escapeHtml(group.fixUrl)}" target="_blank" rel="noopener" style="font-size:12px;">Fix guide &rarr;</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Impact</th>
+          <th>Selector</th>
+          <th>Pages</th>
+          <th>Root Cause</th>
+          <th>HTML Snippet</th>
+          <th>Affected URLs</th>
+        </tr>
+      </thead>
+      <tbody>${group.patterns.map(buildPatternRow).join('\n')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function buildHtml(report: JsonReport): string {
+  const { meta, patterns, skippedUrls } = report;
+  const criticalCount = patterns.filter((p) => p.impact === 'critical').length;
+  const seriousCount = patterns.filter((p) => p.impact === 'serious').length;
+  const groups = groupByViolation(patterns);
+
+  const groupSections = Array.from(groups.entries())
+    .map(([violationId, group]) => buildGroupSection(violationId, group))
     .join('\n');
 
   const skippedSection =
@@ -88,7 +146,13 @@ function buildHtml(report: JsonReport): string {
     .meta-item strong { display: block; font-size: 22px; color: #111; }
     .meta-item.critical strong { color: #d32f2f; }
     .meta-item.serious strong { color: #e65100; }
-    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; font-size: 14px; }
+    .group { margin-bottom: 28px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #fff; }
+    .group-header { padding: 16px 20px; background: #f8f8f8; border-bottom: 1px solid #e0e0e0; }
+    .group-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .group-title h3 { margin: 0; font-size: 16px; font-family: monospace; }
+    .group-stats { font-size: 13px; color: #777; }
+    .group-desc { margin: 6px 0 4px; font-size: 13px; color: #555; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
     thead { background: #f5f5f5; }
     th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #555; border-bottom: 2px solid #e0e0e0; }
     td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
@@ -118,28 +182,8 @@ function buildHtml(report: JsonReport): string {
     <div class="meta-item serious"><strong>${seriousCount}</strong>Serious</div>
   </div>
 
-  <h2>Patterns (${patterns.length})</h2>
-  ${
-    patterns.length > 0
-      ? `<table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Impact</th>
-        <th>Violation</th>
-        <th>Selector</th>
-        <th>Pages</th>
-        <th>Root Cause</th>
-        <th>HTML Snippet</th>
-        <th>Fix</th>
-        <th>Affected URLs</th>
-      </tr>
-    </thead>
-    <tbody>${patternRows}
-    </tbody>
-  </table>`
-      : '<p style="color:#558b2f;font-weight:600;">No accessibility violations found.</p>'
-  }
+  <h2>Violations by Type (${groups.size})</h2>
+  ${patterns.length > 0 ? groupSections : '<p style="color:#558b2f;font-weight:600;">No accessibility violations found.</p>'}
 
   ${skippedSection}
 

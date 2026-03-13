@@ -2,7 +2,7 @@
  * JSON report writer — structured report with metadata, patterns, and skipped URLs.
  */
 
-import { writeFile, mkdir, rm } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import type { ViolationPattern } from '../analyzer/patterns.js';
 
@@ -22,12 +22,13 @@ export function siteDir(sitemapUrl: string): string {
 }
 
 /**
- * Get the site-specific reports directory and ensure it exists.
- * Clears any previous reports in the directory first (keeps only latest scan).
+ * Get a timestamped site-specific reports directory and ensure it exists.
+ * Each scan creates a new subfolder: reports/{hostname}/{timestamp}/
+ * Previous scans are preserved for diffing.
  */
 export async function prepareSiteReportsDir(sitemapUrl: string): Promise<string> {
-  const dir = resolve(REPORTS_DIR, siteDir(sitemapUrl));
-  await rm(dir, { recursive: true, force: true });
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
+  const dir = resolve(REPORTS_DIR, siteDir(sitemapUrl), timestamp);
   await mkdir(dir, { recursive: true });
   return dir;
 }
@@ -51,10 +52,51 @@ export interface JsonReportMeta {
   interruptReason?: string;
 }
 
+export interface PatternGroup {
+  violationId: string;
+  violationDescription: string;
+  impact: string;
+  suggestedFix: string;
+  patternCount: number;
+  totalAffectedPages: number;
+  patterns: ViolationPattern[];
+}
+
 export interface JsonReport {
   meta: JsonReportMeta;
+  patternGroups: PatternGroup[];
   patterns: ViolationPattern[];
   skippedUrls: SkippedUrl[];
+}
+
+/**
+ * Group flat patterns array into PatternGroup[] keyed by violationId.
+ */
+export function groupPatterns(patterns: ViolationPattern[]): PatternGroup[] {
+  const groupMap = new Map<string, PatternGroup>();
+
+  for (const p of patterns) {
+    if (!groupMap.has(p.violationId)) {
+      groupMap.set(p.violationId, {
+        violationId: p.violationId,
+        violationDescription: p.violationDescription,
+        impact: p.impact,
+        suggestedFix: p.suggestedFix,
+        patternCount: 0,
+        totalAffectedPages: 0,
+        patterns: [],
+      });
+    }
+    const group = groupMap.get(p.violationId)!;
+    group.patterns.push(p);
+    group.patternCount++;
+    group.totalAffectedPages += p.affectedPageCount;
+  }
+
+  // Sort groups by total affected pages descending
+  return Array.from(groupMap.values()).sort(
+    (a, b) => b.totalAffectedPages - a.totalAffectedPages
+  );
 }
 
 /**

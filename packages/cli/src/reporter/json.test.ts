@@ -1,7 +1,8 @@
 import { describe, it, expect, afterAll } from 'vitest';
-import { writeJSON, sanitizeFilename, type JsonReport } from './json.js';
-import { readFile, rm } from 'node:fs/promises';
+import { writeJSON, sanitizeFilename, groupPatterns, siteDir, prepareSiteReportsDir, type JsonReport } from './json.js';
+import { readFile, rm, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { ViolationPattern } from '../analyzer/patterns.js';
 
 const REPORTS_DIR = resolve(process.cwd(), 'reports');
 
@@ -17,6 +18,7 @@ const sampleReport: JsonReport = {
     tool: 'a11yscan',
     version: '1.0.0',
   },
+  patternGroups: [],
   patterns: [
     {
       patternId: 'P001',
@@ -104,5 +106,105 @@ describe('sanitizeFilename', () => {
   it('accepts valid filenames', () => {
     expect(sanitizeFilename('aria-report-2026-03-13-1400')).toBe('aria-report-2026-03-13-1400');
     expect(sanitizeFilename('research-audit')).toBe('research-audit');
+  });
+});
+
+const makePattern = (overrides: Partial<ViolationPattern> = {}): ViolationPattern => ({
+  patternId: 'P001',
+  violationId: 'color-contrast',
+  violationDescription: 'Low contrast',
+  impact: 'serious',
+  normalizedSelector: '.text-muted',
+  affectedPageCount: 5,
+  affectedUrls: [],
+  suggestedFix: 'https://example.com/fix',
+  rootCauseHint: 'Component-level issue',
+  htmlSnippet: '<span></span>',
+  failureSummary: 'Fix contrast',
+  rawSelector: '.text-muted',
+  ...overrides,
+});
+
+describe('groupPatterns', () => {
+  it('groups patterns by violationId', () => {
+    const patterns: ViolationPattern[] = [
+      makePattern({ patternId: 'P001', violationId: 'color-contrast', affectedPageCount: 3 }),
+      makePattern({ patternId: 'P002', violationId: 'aria-roles', impact: 'critical', affectedPageCount: 2 }),
+      makePattern({ patternId: 'P003', violationId: 'color-contrast', affectedPageCount: 4 }),
+    ];
+
+    const groups = groupPatterns(patterns);
+
+    const violationIds = groups.map((g) => g.violationId);
+    expect(violationIds).toContain('color-contrast');
+    expect(violationIds).toContain('aria-roles');
+
+    const ccGroup = groups.find((g) => g.violationId === 'color-contrast')!;
+    expect(ccGroup.patterns).toHaveLength(2);
+  });
+
+  it('calculates patternCount and totalAffectedPages correctly', () => {
+    const patterns: ViolationPattern[] = [
+      makePattern({ patternId: 'P001', violationId: 'color-contrast', affectedPageCount: 10 }),
+      makePattern({ patternId: 'P002', violationId: 'color-contrast', affectedPageCount: 5 }),
+      makePattern({ patternId: 'P003', violationId: 'aria-roles', impact: 'critical', affectedPageCount: 3 }),
+    ];
+
+    const groups = groupPatterns(patterns);
+    const ccGroup = groups.find((g) => g.violationId === 'color-contrast')!;
+
+    expect(ccGroup.patternCount).toBe(2);
+    expect(ccGroup.totalAffectedPages).toBe(15);
+  });
+
+  it('sorts groups by totalAffectedPages descending', () => {
+    const patterns: ViolationPattern[] = [
+      makePattern({ patternId: 'P001', violationId: 'aria-roles', impact: 'critical', affectedPageCount: 2 }),
+      makePattern({ patternId: 'P002', violationId: 'color-contrast', affectedPageCount: 10 }),
+      makePattern({ patternId: 'P003', violationId: 'link-name', impact: 'moderate', affectedPageCount: 5 }),
+    ];
+
+    const groups = groupPatterns(patterns);
+
+    expect(groups[0].violationId).toBe('color-contrast');
+    expect(groups[1].violationId).toBe('link-name');
+    expect(groups[2].violationId).toBe('aria-roles');
+  });
+});
+
+describe('siteDir', () => {
+  it('extracts hostname from sitemap URL', () => {
+    expect(siteDir('https://example.com/sitemap.xml')).toBe('example.com');
+  });
+
+  it('handles subdomain URLs', () => {
+    expect(siteDir('https://vuepress.vuejs.org/sitemap.xml')).toBe('vuepress.vuejs.org');
+  });
+
+  it('lowercases the hostname', () => {
+    expect(siteDir('https://EXAMPLE.COM/sitemap.xml')).toBe('example.com');
+  });
+
+  it('returns "unknown-site" for invalid URLs', () => {
+    expect(siteDir('not-a-url')).toBe('unknown-site');
+  });
+
+  it('strips non-alphanumeric characters except dots and hyphens', () => {
+    expect(siteDir('https://my_site.example.com/sitemap.xml')).toBe('mysite.example.com');
+  });
+});
+
+describe('prepareSiteReportsDir', () => {
+  it('creates a timestamped subdirectory', async () => {
+    const dir = await prepareSiteReportsDir('https://example.com/sitemap.xml');
+
+    // Should contain hostname in the path
+    expect(dir).toContain('example.com');
+    // Should contain a timestamp-like pattern (YYYY-MM-DD_HH-MM-SS)
+    expect(dir).toMatch(/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}/);
+
+    // Directory should exist
+    const stats = await stat(dir);
+    expect(stats.isDirectory()).toBe(true);
   });
 });

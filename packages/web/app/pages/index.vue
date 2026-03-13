@@ -7,7 +7,7 @@
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <div class="inline-flex items-center gap-2 rounded-full border border-primary-500/20 bg-primary-500/5 px-4 py-1.5 text-xs font-medium text-primary-500 dark:text-primary-400 mb-6">
-              <span class="h-1.5 w-1.5 rounded-full bg-primary-500 dark:bg-primary-400" />
+              <span class="h-1.5 w-1.5 rounded-full bg-primary-500 dark:bg-primary-400" aria-hidden="true" />
               Phase 1 complete &mdash; CLI scanner ready
             </div>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 dark:text-white tracking-tight leading-[1.1]">
@@ -29,9 +29,9 @@
           <div class="relative">
             <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 shadow-2xl overflow-hidden">
               <div class="flex items-center gap-2 px-4 py-3 bg-neutral-200 dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-800">
-                <span class="h-3 w-3 rounded-full bg-red-500/80" />
-                <span class="h-3 w-3 rounded-full bg-yellow-500/80" />
-                <span class="h-3 w-3 rounded-full bg-green-500/80" />
+                <span class="h-3 w-3 rounded-full bg-red-500/80" aria-hidden="true" />
+                <span class="h-3 w-3 rounded-full bg-yellow-500/80" aria-hidden="true" />
+                <span class="h-3 w-3 rounded-full bg-green-500/80" aria-hidden="true" />
                 <span class="ml-2 text-xs text-neutral-400 dark:text-neutral-600 font-mono">Terminal</span>
               </div>
               <div class="p-5 font-mono text-sm leading-7">
@@ -198,6 +198,8 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'a11yscan — Pattern-aware accessibility auditor' });
+
 const features = [
   { icon: 'i-lucide-scan-search', title: 'Pattern Grouping', description: 'Violations grouped by axe-core rule + CSS selector. One broken component = one pattern, regardless of how many pages it appears on.' },
   { icon: 'i-lucide-zap', title: 'Concurrent Scanning', description: 'Scans up to 5 pages in parallel with Playwright. A 500-page site takes minutes, not hours.' },

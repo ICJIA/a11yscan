@@ -14,7 +14,7 @@
           <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">pnpm add -g a11yscan
 npx playwright install chromium</pre>
         </div>
-        <p class="mt-4 text-sm text-neutral-500">Windows requires WSL2 with Ubuntu. See the <a href="https://github.com/ICJIA/a11yscan#windows-wsl2-required" target="_blank" class="text-primary-500 dark:text-primary-400 hover:underline">README</a> for details.</p>
+        <p class="mt-4 text-sm text-neutral-500">Windows requires WSL2 with Ubuntu. See the <a href="https://github.com/ICJIA/a11yscan#windows-wsl2-required" target="_blank" rel="noopener noreferrer" class="text-primary-500 dark:text-primary-400 hover:underline">README</a> for details.</p>
       </div>
 
       <!-- Quick Start -->
@@ -34,6 +34,7 @@ a11yscan --sitemap https://example.com/sitemap.xml</pre>
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6">CLI reference</h2>
         <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
           <table class="w-full text-sm">
+            <caption class="sr-only">CLI flags and options</caption>
             <thead>
               <tr class="bg-neutral-100 dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400">
                 <th class="text-left px-4 py-3 font-semibold">Flag</th>
@@ -70,6 +71,7 @@ a11yscan --sitemap https://example.com/sitemap.xml</pre>
         <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Exit codes</h2>
         <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
           <table class="w-full text-sm">
+            <caption class="sr-only">Exit codes</caption>
             <thead>
               <tr class="bg-neutral-100 dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400">
                 <th class="text-left px-4 py-3 font-semibold">Code</th>
@@ -86,18 +88,27 @@ a11yscan --sitemap https://example.com/sitemap.xml</pre>
         </div>
       </div>
 
-      <!-- Deployment -->
+      <!-- Installation Prerequisites -->
       <div class="mt-16">
-        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Deployment</h2>
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Chromium dependencies</h2>
         <div class="space-y-8">
           <div>
-            <h3 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Digital Ocean / Laravel Forge</h3>
-            <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3">The CLI needs headless Chromium, so it runs on a real server (not serverless). Recommended: 2 vCPU / 4 GB RAM droplet with Ubuntu 22.04+.</p>
+            <h3 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Ubuntu / Debian</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3">Install system libraries required by headless Chromium:</p>
             <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
-              <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">cd /home/forge/a11yscan
-pnpm install --frozen-lockfile
-pnpm --filter a11yscan build
-npx playwright install --with-deps chromium</pre>
+              <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">sudo apt-get update && sudo apt-get install -y \
+  libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+  libxcomposite1 libxdamage1 libxrandr2 libgbm1 \
+  libpango-1.0-0 libcairo2 libasound2
+
+npx playwright install chromium</pre>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">macOS</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3">No extra system packages needed — just install the browser binary:</p>
+            <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
+              <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">npx playwright install chromium</pre>
             </div>
           </div>
           <div>
@@ -110,6 +121,63 @@ npx playwright install --with-deps chromium</pre>
     a11yscan $&#123;&#123; env.SITE_URL &#125;&#125; --ci --output json</pre>
             </div>
           </div>
+        </div>
+      </div>
+      <!-- System Requirements -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6">System requirements</h2>
+        <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+          <table class="w-full text-sm">
+            <caption class="sr-only">System requirements by platform</caption>
+            <thead>
+              <tr class="bg-neutral-100 dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400">
+                <th class="text-left px-4 py-3 font-semibold">Platform</th>
+                <th class="text-left px-4 py-3 font-semibold">Minimum</th>
+                <th class="text-left px-4 py-3 font-semibold">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t border-neutral-200 dark:border-neutral-800/50">
+                <td class="px-4 py-3 font-medium text-neutral-900 dark:text-neutral-200">macOS</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">macOS 12+ (Monterey), Node.js 18+</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">No extra system packages needed</td>
+              </tr>
+              <tr class="border-t border-neutral-200 dark:border-neutral-800/50">
+                <td class="px-4 py-3 font-medium text-neutral-900 dark:text-neutral-200">Ubuntu / Debian</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">Ubuntu 22.04+, Node.js 18+</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">Requires Chromium system libraries (see above)</td>
+              </tr>
+              <tr class="border-t border-neutral-200 dark:border-neutral-800/50">
+                <td class="px-4 py-3 font-medium text-neutral-900 dark:text-neutral-200">Windows</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">Windows 10/11 + WSL2, Ubuntu 22.04+, Node.js 18+</td>
+                <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">Native Windows not supported — requires WSL2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          All platforms require <span class="font-mono text-neutral-700 dark:text-neutral-300">pnpm</span> (or npm/yarn) and a Chromium binary installed via Playwright.
+        </p>
+      </div>
+
+      <!-- Building from Source -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Building from source</h2>
+        <p class="text-neutral-500 dark:text-neutral-400 mb-4">Clone the repo and install dependencies:</p>
+        <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/80 overflow-hidden">
+          <pre class="p-5 text-sm font-mono text-neutral-700 dark:text-neutral-300 overflow-x-auto">git clone https://github.com/ICJIA/a11yscan.dev.git
+cd a11yscan.dev
+pnpm install
+npx playwright install chromium
+
+<span class="text-neutral-400 dark:text-neutral-600"># Build the CLI</span>
+pnpm --filter a11yscan build
+
+<span class="text-neutral-400 dark:text-neutral-600"># Run tests</span>
+pnpm test
+
+<span class="text-neutral-400 dark:text-neutral-600"># Optional: create a shell alias</span>
+alias a11yscan='node ./packages/cli/dist/index.js'</pre>
         </div>
       </div>
     </section>
@@ -127,7 +195,7 @@ const flags = [
   { name: '--exclude <paths>', default: '—', description: 'Comma-separated path prefixes to exclude' },
   { name: '--depth <n>', default: '—', description: 'Max URL path depth to include' },
   { name: '--limit <n>', default: '—', description: 'Max number of pages to scan' },
-  { name: '--output <formats>', default: 'csv,json,html', description: 'Comma-separated output formats' },
+  { name: '--output <formats>', default: 'csv,json,html', description: 'Comma-separated: csv, json, html, md' },
   { name: '--filename <name>', default: 'auto', description: 'Base filename for reports' },
   { name: '--concurrency <n>', default: '4', description: 'Parallel pages to scan (1-5)' },
   { name: '--ci', default: 'false', description: 'CI mode: JSON to stdout, exit codes' },
@@ -139,6 +207,7 @@ const examples = [
   { title: 'Glob pattern matching', code: 'a11yscan example.com --filter-glob "/*/services/**"' },
   { title: 'Limit scan scope', code: 'a11yscan example.com --filter "/news" --limit 20' },
   { title: 'Custom report name', code: 'a11yscan example.com --filename "q1-audit"' },
+  { title: 'Markdown for GitHub issues', code: 'a11yscan example.com --output csv,json,html,md' },
   { title: 'CI/CD mode', code: 'a11yscan example.com --ci --output json' },
 ];
 </script>

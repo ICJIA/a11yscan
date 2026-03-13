@@ -11,22 +11,22 @@
             Pattern-aware accessibility auditor. Groups thousands of violations into actionable patterns for ARIA roles, accessible names, and color contrast.
           </p>
         </div>
-        <div>
+        <nav aria-label="Product">
           <h4 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Product</h4>
           <ul class="space-y-2">
             <li><NuxtLink to="/features" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Features</NuxtLink></li>
             <li><NuxtLink to="/docs" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Documentation</NuxtLink></li>
             <li><NuxtLink to="/roadmap" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Roadmap</NuxtLink></li>
           </ul>
-        </div>
-        <div>
+        </nav>
+        <nav aria-label="Resources">
           <h4 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Resources</h4>
           <ul class="space-y-2">
-            <li><a href="https://github.com/ICJIA/a11yscan" target="_blank" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">GitHub</a></li>
-            <li><a href="https://github.com/ICJIA/a11yscan/issues" target="_blank" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Issues</a></li>
-            <li><a href="https://github.com/dequelabs/axe-core" target="_blank" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">axe-core</a></li>
+            <li><a href="https://github.com/ICJIA/a11yscan" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">GitHub</a></li>
+            <li><a href="https://github.com/ICJIA/a11yscan/issues" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Issues</a></li>
+            <li><a href="https://github.com/dequelabs/axe-core" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">axe-core</a></li>
           </ul>
-        </div>
+        </nav>
       </div>
       <div class="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
         <p class="text-xs text-neutral-400 dark:text-neutral-600">MIT License. Built with Nuxt, Playwright, and axe-core.</p>

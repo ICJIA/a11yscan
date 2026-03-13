@@ -14,7 +14,7 @@
           <div class="grid sm:grid-cols-2 gap-6">
             <div v-for="item in section.items" :key="item.title" class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 p-6">
               <div class="flex items-center gap-3 mb-3">
-                <UIcon :name="item.icon" class="text-primary-500 dark:text-primary-400 text-lg" />
+                <UIcon :name="item.icon" class="text-primary-500 dark:text-primary-400 text-lg" aria-hidden="true" />
                 <h3 class="text-base font-semibold text-neutral-900 dark:text-white">{{ item.title }}</h3>
               </div>
               <p class="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ item.description }}</p>
@@ -60,10 +60,11 @@ const sections = [
   {
     title: 'Reporting',
     items: [
-      { icon: 'i-lucide-file-json', title: 'JSON Reports', description: 'Structured report with metadata, patterns array, and skipped URLs. Machine-readable for CI/CD and LLM pipelines.' },
-      { icon: 'i-lucide-table', title: 'CSV Reports', description: '9-column spreadsheet: Pattern ID, Violation ID, Impact, Description, Selector, Affected Pages, Root Cause, Fix URL, Affected URLs.' },
-      { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Self-contained styled HTML with summary cards, impact badges, HTML snippets, and expandable URL lists. Opens directly in your browser.' },
-      { icon: 'i-lucide-folder', title: 'Per-Site Folders', description: 'Reports saved to ./reports/{hostname}/. Each scan replaces the previous one, so you always have the latest results per site.' },
+      { icon: 'i-lucide-file-json', title: 'JSON Reports', description: 'Structured report with patternGroups and flat patterns array. Grouped by violation type for easy consumption by LLMs and CI/CD pipelines.' },
+      { icon: 'i-lucide-table', title: 'CSV Reports', description: '11-column spreadsheet grouped by violation type. Includes HTML snippet, failure summary, and pipe-separated affected URLs.' },
+      { icon: 'i-lucide-globe', title: 'HTML Reports', description: 'Self-contained styled HTML grouped by violation type with impact badges, HTML snippets, and expandable URL lists. Opens directly in your browser.' },
+      { icon: 'i-lucide-file-text', title: 'Markdown Reports', description: 'GitHub-flavored Markdown with summary table, violation sections, and collapsible URL lists. Paste directly into GitHub issues or PRs.' },
+      { icon: 'i-lucide-folder', title: 'Scan History', description: 'Reports saved to ./reports/{hostname}/{timestamp}/. Every scan is preserved in a timestamped folder for diffing and trend analysis.' },
     ],
   },
 ];
