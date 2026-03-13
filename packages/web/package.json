@@ -1,0 +1,20 @@
+{
+  "name": "a11yscan-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/ui": "3.1.3",
+    "nuxt": "4.4.2",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
+  }
+}

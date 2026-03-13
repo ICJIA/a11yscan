@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --color-primary-50: oklch(97% 0.02 160);
+  --color-primary-100: oklch(93% 0.04 160);
+  --color-primary-200: oklch(87% 0.08 158);
+  --color-primary-300: oklch(79% 0.14 155);
+  --color-primary-400: oklch(72% 0.18 152);
+  --color-primary-500: oklch(64% 0.19 151);
+  --color-primary-600: oklch(55% 0.16 150);
+  --color-primary-700: oklch(47% 0.13 150);
+  --color-primary-800: oklch(39% 0.10 150);
+  --color-primary-900: oklch(32% 0.07 150);
+  --color-primary-950: oklch(24% 0.05 150);
+}

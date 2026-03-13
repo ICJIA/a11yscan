@@ -5,6 +5,8 @@ node_modules/
 packages/cli/dist/
 packages/web/.output/
 packages/web/.nuxt/
+packages/web/dist/
+packages/web/node_modules/.cache/
 
 # Reports and profiles (user-generated, not committed)
 reports/

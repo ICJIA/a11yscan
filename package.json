@@ -5,6 +5,9 @@
     "build": "pnpm --filter cli build",
     "build:cli": "pnpm --filter cli build",
     "dev:cli": "pnpm --filter cli dev",
+    "dev:web": "pnpm --filter a11yscan-web dev",
+    "build:web": "pnpm --filter a11yscan-web build",
+    "generate": "pnpm --filter a11yscan-web generate",
     "test": "pnpm --filter cli test",
     "lint": "pnpm --filter cli lint"
   },
