@@ -171,7 +171,7 @@ pnpm install
 npx playwright install chromium
 
 <span class="text-neutral-400 dark:text-neutral-600"># Build the CLI</span>
-pnpm --filter a11yscan build
+pnpm build
 
 <span class="text-neutral-400 dark:text-neutral-600"># Run tests</span>
 pnpm test

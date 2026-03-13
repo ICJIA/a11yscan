@@ -20,11 +20,11 @@
  * Tool identity — shown in reports and terminal output.
  */
 export const TOOL_NAME = 'a11yscan';
-export const TOOL_VERSION = '1.0.0';
+export const TOOL_VERSION = '1.1.0';
 
 /**
  * Default output formats when --output is not specified.
- * Valid values: 'csv', 'json'
+ * Valid values: 'csv', 'json', 'html', 'md'
  */
 export const DEFAULT_OUTPUT_FORMATS = ['csv', 'json', 'html'];
 
@@ -90,7 +90,7 @@ export const SITEMAP_RETRY_DELAY = 5_000;
 /**
  * Valid output format options. Used for CLI flag validation.
  */
-export const VALID_OUTPUT_FORMATS = ['csv', 'json', 'html'] as const;
+export const VALID_OUTPUT_FORMATS = ['csv', 'json', 'html', 'md'] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CAREFUL CHANGES — These affect scan coverage and accuracy.
@@ -196,11 +196,13 @@ export const MAX_FILENAME_LENGTH = 100;
  * Changing these will break any downstream CSV parsers that depend on column names.
  */
 export const CSV_COLUMNS = [
+  'Violation Type',
   'Pattern ID',
-  'Violation ID',
   'Description',
   'Impact',
   'Selector',
+  'HTML Snippet',
+  'Failure Summary',
   'Affected Pages',
   'Suggested Fix',
   'Root Cause Hint',

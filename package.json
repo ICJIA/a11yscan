@@ -3,16 +3,16 @@
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "scripts": {
-    "build": "pnpm --filter cli build",
-    "build:cli": "pnpm --filter cli build",
-    "dev:cli": "pnpm --filter cli dev",
+    "build": "pnpm --filter a11yscan build",
+    "build:cli": "pnpm --filter a11yscan build",
+    "dev:cli": "pnpm --filter a11yscan dev",
     "dev:web": "pnpm --filter a11yscan-web dev",
     "build:web": "pnpm --filter a11yscan-web build",
     "generate": "pnpm --filter a11yscan-web generate",
     "test": "pnpm -r test",
     "test:cli": "pnpm --filter a11yscan test",
     "test:web": "pnpm --filter a11yscan-web test",
-    "lint": "pnpm --filter cli lint"
+    "lint": "pnpm --filter a11yscan lint"
   },
   "devDependencies": {
     "typescript": "5.7.3"

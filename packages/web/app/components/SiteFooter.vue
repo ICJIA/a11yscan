@@ -30,7 +30,13 @@
       </div>
       <div class="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
         <p class="text-xs text-neutral-400 dark:text-neutral-600">MIT License. Built with Nuxt, Playwright, and axe-core.</p>
-        <p class="text-xs text-neutral-400 dark:text-neutral-600">Illinois Criminal Justice Information Authority</p>
+        <div class="flex items-center gap-3">
+          <a href="https://github.com/ICJIA/a11yscan/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-xs text-neutral-400 dark:text-neutral-600 hover:text-primary-500 dark:hover:text-primary-400 transition-colors font-mono">v1.1.0</a>
+          <span class="text-neutral-300 dark:text-neutral-700">|</span>
+          <a href="https://github.com/ICJIA/a11yscan/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-xs text-neutral-400 dark:text-neutral-600 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Changelog</a>
+          <span class="text-neutral-300 dark:text-neutral-700">|</span>
+          <span class="text-xs text-neutral-400 dark:text-neutral-600">Illinois Criminal Justice Information Authority</span>
+        </div>
       </div>
     </div>
   </footer>

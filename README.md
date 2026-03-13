@@ -92,14 +92,22 @@ Windows native is not supported. You must use WSL2 with an Ubuntu distro.
 # 2. Open Ubuntu terminal and follow the Ubuntu instructions above
 ```
 
-### Shell alias (local development)
-
-If you're running a11yscan from source rather than a global install, add an alias to your shell config:
+### Building from source
 
 ```bash
-# Add to ~/.zshrc or ~/.bashrc
-alias a11yscan='node /path/to/a11yscan.dev/packages/cli/dist/index.js'
-source ~/.zshrc
+git clone https://github.com/ICJIA/a11yscan.dev.git
+cd a11yscan.dev
+pnpm install
+npx playwright install chromium
+
+# Build the CLI
+pnpm build
+
+# Run tests
+pnpm test
+
+# Optional: create a shell alias
+alias a11yscan='node ./packages/cli/dist/index.js'
 ```
 
 ## Usage
@@ -232,7 +240,7 @@ All reports group violations by pattern type. The HTML report features interacti
 
 ## Configuration
 
-All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for tool identity, default output formats, concurrency limits, timeouts, axe-core rules, blocked hosts, root cause patterns, exit codes, and CSV column headers.
+All configurable values are centralized in `packages/cli/src/a11y.config.ts`. This file is the single source of truth for tool identity, default output formats (csv, json, html, md), concurrency limits, timeouts, axe-core rules, blocked hosts, root cause patterns, exit codes, and CSV column headers.
 
 ## Testing
 
