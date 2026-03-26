@@ -24,7 +24,7 @@
     "commander": "12.1.0",
     "csv-writer": "1.6.0",
     "p-limit": "6.0.0",
-    "picomatch": "4.0.2",
+    "picomatch": "4.0.4",
     "playwright": "1.50.0",
     "sitemapper": "3.1.4"
   },
