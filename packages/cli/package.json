@@ -32,6 +32,6 @@
     "@types/node": "22.13.4",
     "@types/picomatch": "4.0.2",
     "typescript": "5.7.3",
-    "vitest": "3.0.0"
+    "vitest": "3.0.5"
   }
 }
